@@ -1,0 +1,87 @@
+{
+  "organizations": [
+    {"name": "Minion", "ev_modifier": 0.5, "stamina_modifier": 0.5, "damage_modifier": null, "damage_division": true, "description": "Weak, die fast, squad-based Stamina pool"},
+    {"name": "Horde", "ev_modifier": 0.5, "stamina_modifier": 0.5, "damage_modifier": null, "damage_division": true, "description": "Outnumber ~2:1, more fragile than platoon"},
+    {"name": "Platoon", "ev_modifier": 1.0, "stamina_modifier": 1.0, "damage_modifier": 1.0, "damage_division": false, "description": "Well-rounded, ~1 per hero"},
+    {"name": "Elite", "ev_modifier": 2.0, "stamina_modifier": 2.0, "damage_modifier": 2.0, "damage_division": false, "description": "Hardy, ~2 heroes worth"},
+    {"name": "Leader", "ev_modifier": 2.0, "stamina_modifier": 2.0, "damage_modifier": 2.0, "damage_division": false, "description": "Buffs allies, has villain actions"},
+    {"name": "Solo", "ev_modifier": 6.0, "stamina_modifier": 6.0, "damage_modifier": 6.0, "damage_division": false, "description": "Full encounter alone, ~6 heroes worth"}
+  ],
+  "roles": [
+    {"name": "Ambusher", "stamina_modifier": 20, "damage_modifier": 1, "description": "Stealthy attacker dealing massive sudden damage"},
+    {"name": "Artillery", "stamina_modifier": 10, "damage_modifier": 1, "description": "Ranged attacker dealing area damage from distance"},
+    {"name": "Brute", "stamina_modifier": 30, "damage_modifier": 1, "description": "Hardy creature with lots of Stamina and damage"},
+    {"name": "Controller", "stamina_modifier": 10, "damage_modifier": 0, "description": "Creature who changes the battlefield with magic/psionics"},
+    {"name": "Defender", "stamina_modifier": 30, "damage_modifier": 0, "description": "Tough creature able to take damage and protect allies"},
+    {"name": "Harrier", "stamina_modifier": 20, "damage_modifier": 0, "description": "Mobile warrior using hit-and-run tactics"},
+    {"name": "Hexer", "stamina_modifier": 10, "damage_modifier": 0, "description": "Debuffer specializing in conditions and curses"},
+    {"name": "Mount", "stamina_modifier": 20, "damage_modifier": 0, "description": "Mobile creature meant to be ridden in combat"},
+    {"name": "Support", "stamina_modifier": 20, "damage_modifier": 0, "description": "Ally enhancer providing buffs, healing, and utility"}
+  ],
+  "creature_keywords": {
+    "cosmological": [
+      {"name": "Abyssal", "description": "Demons, gnolls from Abyssal Wasteland"},
+      {"name": "Elemental", "description": "Fire, water, air, earth creatures from Manifold of Elements"},
+      {"name": "Fey", "description": "Nature/magic creatures from Arcadia"},
+      {"name": "Infernal", "description": "Devils, hobgoblins from Seven Cities of Hell"}
+    ],
+    "biological": [
+      {"name": "Animal", "description": "Real-world animals + similar sapience (bears, wolves)"},
+      {"name": "Beast", "description": "Animal-level sapience + supernatural abilities (basilisks)"},
+      {"name": "Giant", "description": "Ogres, trolls, similar body shape to humanoids"},
+      {"name": "Humanoid", "description": "Size 1, human-like limb arrangement (dwarves)"},
+      {"name": "Ooze", "description": "Semisolid masses (slimes, puddles)"},
+      {"name": "Plant", "description": "Made of vegetation, can move (shambling mound)"}
+    ],
+    "supernatural": [
+      {"name": "Construct", "description": "Manufactured, magic/psionic animation (golems)"},
+      {"name": "Dragon", "description": "Giant reptilian, breath weapons, wings"},
+      {"name": "Horror", "description": "Alien appearance, psionic abilities (overminds)"},
+      {"name": "Undead", "description": "Reanimated flesh/spirits (ghosts, zombies)"}
+    ],
+    "special": [
+      {"name": "Accursed", "description": "Under powerful supernatural curse (medusas, werewolves)"},
+      {"name": "Soulless", "description": "No soul, immune to soul-affecting effects"},
+      {"name": "Swarm", "description": "Multiple creatures acting as one"}
+    ]
+  },
+  "ability_keywords": [
+    "Strike",
+    "Magic",
+    "Weapon",
+    "Psionic",
+    "Area"
+  ],
+  "damage_types": [
+    "acid",
+    "cold",
+    "corruption",
+    "fire",
+    "holy",
+    "lightning",
+    "poison",
+    "psychic",
+    "sonic"
+  ],
+  "conditions": [
+    "Bleeding",
+    "Blinded",
+    "Cursed",
+    "Dazed",
+    "Frightened",
+    "Grabbed",
+    "Harrowed",
+    "Impaired",
+    "Prone",
+    "Pushed",
+    "Restrained",
+    "Slowed",
+    "Taunted",
+    "Weakened"
+  ],
+  "tier_multipliers": {
+    "tier1": 0.6,
+    "tier2": 1.1,
+    "tier3": 1.4
+  }
+}

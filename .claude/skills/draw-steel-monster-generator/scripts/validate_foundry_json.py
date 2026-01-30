@@ -808,6 +808,101 @@ def validate_token_config(data: dict, result: ValidationResult) -> None:
         )
 
 
+def validate_spend_field(data: dict, result: ValidationResult) -> None:
+    """Validate that all abilities have a spend field, even if empty."""
+    items = data.get("items", [])
+    for item in items:
+        if item.get("type") == "ability":
+            system = item.get("system", {})
+            spend = system.get("spend")
+
+            # Check if spend field exists
+            if spend is None:
+                result.add_error(
+                    f"Ability '{item.get('name', 'Unknown')}' is missing spend field. "
+                    f'Must include "spend": {{"text": "", "value": null}} even if no cost.'
+                )
+            else:
+                # Check structure
+                if not isinstance(spend, dict):
+                    result.add_error(
+                        f"Ability '{item.get('name', 'Unknown')}' spend field must be an object, "
+                        f"got: {type(spend).__name__}"
+                    )
+                else:
+                    # Check for required keys
+                    if "text" not in spend:
+                        result.add_error(
+                            f"Ability '{item.get('name', 'Unknown')}' spend missing 'text' key. "
+                            f'Must include "text": "".'
+                        )
+                    if "value" not in spend:
+                        result.add_error(
+                            f"Ability '{item.get('name', 'Unknown')}' spend missing 'value' key. "
+                            f'Must include "value": null.'
+                        )
+
+
+def validate_damage_types(data: dict, result: ValidationResult) -> None:
+    """Validate that damage types in power.effects are valid Foundry damage types."""
+    # Valid damage types from Foundry's ds.CONFIG.damageTypes
+    valid_damage_types = {
+        "acid",
+        "cold",
+        "corruption",
+        "fire",
+        "holy",
+        "lightning",
+        "poison",
+        "psychic",
+        "sonic",
+    }
+
+    # D&D terms that are NOT valid in Draw Steel
+    invalid_damage_types = {
+        "physical",
+        "slashing",
+        "bludgeoning",
+        "piercing",
+        "force",
+        "necrotic",
+        "radiant",
+        "thunder",
+        "untyped",
+    }
+
+    items = data.get("items", [])
+    for item in items:
+        if item.get("type") == "ability":
+            system = item.get("system", {})
+            power = system.get("power", {})
+            effects = power.get("effects", {})
+
+            for effect_id, effect in effects.items():
+                if effect.get("type") == "damage":
+                    damage = effect.get("damage", {})
+                    for tier_name in ["tier1", "tier2", "tier3"]:
+                        tier = damage.get(tier_name, {})
+                        types = tier.get("types", [])
+
+                        if not isinstance(types, list):
+                            continue
+
+                        for damage_type in types:
+                            if damage_type in invalid_damage_types:
+                                result.add_error(
+                                    f"Ability '{item.get('name', 'Unknown')}' uses invalid damage type "
+                                    f"'{damage_type}'. Valid Draw Steel types: {', '.join(sorted(valid_damage_types))}, "
+                                    f"or empty array for untyped damage."
+                                )
+                            elif damage_type and damage_type not in valid_damage_types:
+                                result.add_error(
+                                    f"Ability '{item.get('name', 'Unknown')}' uses unknown damage type "
+                                    f"'{damage_type}'. Valid types: {', '.join(sorted(valid_damage_types))}, "
+                                    f"or empty array for untyped damage."
+                                )
+
+
 def validate_json_file(filepath: str) -> ValidationResult:
     """
     Validate a single JSON file and return a ValidationResult.
@@ -846,6 +941,8 @@ def validate_json_file(filepath: str) -> ValidationResult:
     validate_malice_resource(data, result)
     validate_villain_actions(data, result)
     validate_malice_costs(data, result)
+    validate_spend_field(data, result)
+    validate_damage_types(data, result)
 
     return result
 

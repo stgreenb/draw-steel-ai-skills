@@ -274,16 +274,20 @@ When generating Foundry VTT JSON, output a JSON object with this EXACT structure
              }
            }
          },
-         "effect": {
-           "before": "",
-           "after": "<p>You shift up to 2 squares.</p>"
-         },
-         "source": { "book": "Monsters", "license": "Draw Steel Creator License" },
-         "_dsid": "stinger-strike",
-         "story": "",
-         "resource": null,
-         "trigger": ""
-       },
+"effect": {
+            "before": "",
+            "after": "<p>You shift up to 2 squares.</p>"
+          },
+          "spend": {
+            "text": "",
+            "value": null
+          },
+          "source": { "book": "Monsters", "license": "Draw Steel Creator License" },
+          "_dsid": "stinger-strike",
+          "story": "",
+          "resource": null,
+          "trigger": ""
+        },
        "_id": "a1B2c3D4e5F67890",  // Matches ^[a-zA-Z0-9]{16}$
        "effects": [],
        "ownership": { "default": 0 }
@@ -315,6 +319,7 @@ When generating Foundry VTT JSON, output a JSON object with this EXACT structure
 | Keywords match distance type | "Melee" in keywords for ranged abilities |
 | `_id` matches `^[a-zA-Z0-9]{16}$` | UUID like `d4e5f6a7-b8c9-0123-defa-456789012345` |
 | `resource: 3` (integer) for malice cost | `resource: {value: 3}` (object) |
+| `spend` field in all abilities | Missing `spend` field (even if empty) |
 | `damageDisplay: ""` for area abilities | `damageDisplay: "area"` (invalid choice) |
 | Valid distance types: `burst`, `cube`, `line` | `cone` is NOT a valid area type in Draw Steel! |
 | Cone-like abilities use `cube` type | Using `cone` (not in official rules) for breath/spray |
@@ -356,6 +361,7 @@ Before outputting JSON with `--format foundry` or `--format both`, verify ALL of
   - `system.combat.save.threshold`
   - `system.combat.size.value`
   - `system.monster.level` and `system.monster.ev`
+  - `system.spend` field in all abilities (even if empty)
 - [ ] **Token config:** `prototypeToken.bar1.attribute` equals `"stamina"`
 
 **If any check fails, correct the JSON before outputting.**
@@ -587,6 +593,29 @@ Elite/Leader/Solo monsters should have at least one heroic ability that costs ma
 ```
 
 **Critical:** Elite, Leader, and Solo monsters MUST have at least one ability with `resource: integer > 0`.
+
+### Spend Field (Required for ALL abilities)
+
+All abilities must include a `spend` field, even if they don't cost anything:
+
+```json
+// CORRECT (ability with no cost):
+"spend": {
+  "text": "",
+  "value": null
+}
+
+// CORRECT (ability that costs 3 Malice):
+"spend": {
+  "text": "Spend 3 Malice to activate this ability",
+  "value": 3
+}
+
+// INCORRECT (missing spend field - will crash Foundry):
+// (no spend field at all)
+```
+
+**Critical:** Every ability MUST have `spend` field with `text` and `value` keys, even if empty.
 
 ### Power Roll Effects Structure (CRITICAL - Read This!)
 
@@ -865,6 +894,30 @@ For abilities with power rolls (signature, heroic, villain), you MUST structure 
 - Condition effects → `"type": "applied"` with nested `applied: { tier1: {...}, ... }`
 - Force movement → `"type": "forced"` with nested `forced: { tier1: {...}, ... }`
 - Other effects → `"type": "other"` with nested `other: { tier1: {...}, ... }`
+
+### Valid Damage Types (CRITICAL!)
+
+**ONLY these damage types are valid in Draw Steel Foundry VTT:**
+- `acid`, `cold`, `corruption`, `fire`, `holy`, `lightning`, `poison`, `psychic`, `sonic`
+
+**INVALID damage types (D&D terminology - will crash Foundry):**
+- `physical`, `slashing`, `bludgeoning`, `piercing`, `force`, `necrotic`, `radiant`, `thunder`, `untyped`
+
+**For untyped damage:** Use empty array `"types": []`
+
+```json
+// CORRECT (poison damage):
+"types": ["poison"]
+
+// CORRECT (untyped damage):
+"types": []
+
+// INCORRECT (D&D terminology - will crash Foundry):
+"types": ["piercing"]
+
+// INCORRECT (fake "untyped" type - will crash Foundry):
+"types": ["untyped"]
+```
 
 ## Step 1: Calculate Stats
 
