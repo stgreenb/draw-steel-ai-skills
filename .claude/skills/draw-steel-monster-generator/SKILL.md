@@ -119,6 +119,27 @@ Use the `--format` option to specify output format:
 - `--format foundry` - Foundry VTT JSON file
 - `--format both` - Both Markdown and Foundry VTT
 
+### Using Examples as Inspiration (IMPORTANT!)
+
+**CRITICAL:** The examples in this skill are for **inspiration only**. Do NOT copy them verbatim!
+
+When creating monster abilities and features:
+- **Use unique names** that fit your creature's theme (not "Stinger Strike" unless it's actually a stinger)
+- **Adapt mechanics** to match the creature's actual abilities
+- **Vary damage types** and effects from examples
+- **Consider the creature's keywords** when designing abilities
+- **Create something unique** - don't just change the name and keep the same mechanics
+
+**Why this matters:**
+- Every monster should be distinct and thematic
+- Copying examples verbatim defeats the purpose of generating unique monsters
+- Foundry VTT will crash if you use invalid patterns from copied examples
+- Your monsters will be more interesting and memorable
+
+**Example:**
+- ❌ **DON'T:** Copy "Stinger Strike" and just rename it to "Claw Strike"
+- ✅ **DO:** Create "Rending Talons" with unique mechanics that fit a wolf's hunting style
+
 ### Foundry VTT Output Requires Validation (MANDATORY)
 
 **For `--format foundry` or `--format both`, you MUST validate the JSON output.**
@@ -210,9 +231,9 @@ When generating Foundry VTT JSON, output a JSON object with this EXACT structure
        "system": {
          "type": "main",
          "category": "signature",
-         "keywords": ["melee", "strike"],
+         "keywords": ["melee", "strike", "weapon"],
          "distance": { "type": "melee", "primary": 1 },
-         "target": { "type": "creature", "value": 1 },
+         "target": { "type": "creatureObject", "value": 1 },
          "damageDisplay": "melee",
          "power": {
            "roll": { "formula": "@chr", "characteristics": ["agility"] },
@@ -274,7 +295,7 @@ When generating Foundry VTT JSON, output a JSON object with this EXACT structure
              }
            }
          },
-"effect": {
+         "effect": {
             "before": "",
             "after": "<p>You shift up to 2 squares.</p>"
           },
@@ -297,6 +318,161 @@ When generating Foundry VTT JSON, output a JSON object with this EXACT structure
   "_id": "sJhjuVdliz3ThjEa"  // Matches ^[a-zA-Z0-9]{16}$, unique for each actor
 }
 ```
+
+**Charge Attack Example (optional "charge" keyword):**
+
+```json
+{
+  "name": "Spear Charge",
+  "type": "ability",
+  "system": {
+    "type": "main",
+    "category": "signature",
+    "keywords": ["charge", "melee", "strike", "weapon"],
+    "distance": { "type": "melee", "primary": 1 },
+    "target": { "type": "creatureObject", "value": 1 },
+    "damageDisplay": "melee",
+    "power": {
+      "roll": { "formula": "@chr", "characteristics": ["agility"] },
+      "effects": {
+        "Y0x6xGOw9jHthmy2": {
+          "type": "damage",
+          "_id": "Y0x6xGOw9jHthmy2",
+          "damage": {
+            "tier1": {
+              "value": "3",
+              "types": [],
+              "properties": [],
+              "potency": { "value": "@potency.weak", "characteristic": "none" }
+            },
+            "tier2": {
+              "value": "4",
+              "types": [],
+              "properties": [],
+              "potency": { "value": "@potency.average", "characteristic": "" }
+            },
+            "tier3": {
+              "value": "5",
+              "types": [],
+              "properties": [],
+              "potency": { "value": "@potency.strong", "characteristic": "" }
+            }
+          }
+        }
+      }
+    },
+    "effect": {
+      "before": "",
+      "after": ""
+    },
+    "spend": {
+      "text": "",
+      "value": null
+    },
+    "source": { "book": "Monsters", "license": "Draw Steel Creator License" },
+    "_dsid": "spear-charge",
+    "story": "",
+    "resource": null,
+    "trigger": ""
+  },
+  "_id": "sPeArChArGe12Ab3C",
+  "effects": [],
+  "ownership": { "default": 0 }
+}
+```
+
+**NOTE:** The "charge" keyword is optional - only include it for abilities that are actually charge-based (movement + attack in one action).
+
+#### Breath Weapon Example (area/magic keywords, NOT damage types)
+
+```json
+{
+  "name": "Corroding Breath",
+  "type": "ability",
+  "system": {
+    "type": "main",
+    "category": "signature",
+    "keywords": ["area", "magic", "ranged"],
+    "distance": { "type": "cube", "primary": 3 },
+    "target": { "type": "creatureObject", "value": null, "custom": "Each creature and object in the area" },
+    "damageDisplay": "",
+    "power": {
+      "roll": { "formula": "@chr", "characteristics": ["reason"] },
+      "effects": {
+        "jUXtXHkSkBIE3qfE": {
+          "type": "damage",
+          "_id": "jUXtXHkSkBIE3qfE",
+          "damage": {
+            "tier1": {
+              "value": "14",
+              "types": ["corruption"],
+              "properties": [],
+              "potency": { "value": "@potency.weak", "characteristic": "none" }
+            },
+            "tier2": {
+              "value": "19",
+              "types": ["corruption"],
+              "properties": [],
+              "potency": { "value": "@potency.average", "characteristic": "" }
+            },
+            "tier3": {
+              "value": "23",
+              "types": ["corruption"],
+              "properties": [],
+              "potency": { "value": "@potency.strong", "characteristic": "" }
+            }
+          }
+        }
+      }
+    },
+    "effect": {
+      "before": "",
+      "after": "<p>This ability gains an edge against targets the monster has previously dealt corrosion damage to.</p>"
+    },
+    "spend": {
+      "text": "",
+      "value": null
+    },
+    "source": { "book": "Monsters", "license": "Draw Steel Creator License" },
+    "_dsid": "corroding-breath",
+    "story": "",
+    "resource": null,
+    "trigger": ""
+  },
+  "_id": "cOrRoDiNgBrEaTh1A",
+  "effects": [],
+  "ownership": { "default": 0 }
+}
+```
+
+**CRITICAL:** Breath weapons and spew abilities MUST use `["area", "magic"]` keywords, NOT damage type keywords like `"fire"` or `"poison"`. The damage type is specified in `power.effects`, not in `keywords`.
+
+### Ability Type Variety
+
+Different ability types serve different purposes. Use multiple types to create interesting monsters:
+
+**Main:** Standard actions that consume the creature's main action
+- Most common ability type
+- Used for signature attacks and primary abilities
+
+**Maneuver:** Movement or positioning abilities that don't consume the main action
+- Used for repositioning, escaping, or controlling the battlefield
+- Often includes area effects or movement keywords
+
+**FreeTriggered:** Immediate reaction to triggers
+- Used for defensive responses (e.g., when damaged, when adjacent)
+- Does NOT consume main action
+- Trigger field specifies when it can be used
+
+**None:** Custom abilities with unique rules
+- Used for abilities that don't fit standard action types
+- Often has special distance or targeting
+
+**Villain:** Special abilities for Solo/Leader only
+- Exactly 3 per monster (opener, crowd control, ult)
+- Can be used only once per encounter
+- Used at end of any creature's turn
+- See villain action guidance section above
 
 ### Foundry VTT Rules (CRITICAL - READ BEFORE GENERATING JSON)
 
@@ -322,6 +498,11 @@ When generating Foundry VTT JSON, output a JSON object with this EXACT structure
 | `spend` field in all abilities | Missing `spend` field (even if empty) |
 | `damageDisplay: ""` for area abilities | `damageDisplay: "area"` (invalid choice) |
 | Valid distance types: `burst`, `cube`, `line` | `cone` is NOT a valid area type in Draw Steel! |
+| Strike keywords: `["melee", "strike", "weapon"]` | Strike keywords without "weapon" keyword |
+| Target type: `"creatureObject"` for strikes | Target type: `"creature"` for strikes (less common) |
+| Breath/spew keywords: `["area", "magic"]` | Breath/spew keywords with damage types like "fire" |
+| Area targets: include `"custom"` field | Area targets without descriptive custom text |
+| Use examples as inspiration for unique abilities | Copy examples verbatim with just name changes |
 | Cone-like abilities use `cube` type | Using `cone` (not in official rules) for breath/spray |
 
 ### Self-Validation Checklist for Foundry VTT JSON (MANDATORY)
@@ -918,6 +1099,124 @@ For abilities with power rolls (signature, heroic, villain), you MUST structure 
 // INCORRECT (fake "untyped" type - will crash Foundry):
 "types": ["untyped"]
 ```
+
+### Ability Type Examples
+
+**IMPORTANT:** Use these examples as **inspiration** for creating unique abilities. Do NOT copy them verbatim - adapt them to fit your creature's theme with unique names, damage types, and effects.
+
+#### Maneuver Ability Example
+```json
+{
+  "name": "Wing Buffet",
+  "type": "ability",
+  "system": {
+    "type": "maneuver",
+    "category": "signature",
+    "keywords": ["area"],
+    "distance": { "type": "burst", "primary": 2 },
+    "target": { "type": "enemy", "value": null, "custom": "Each enemy in the area" },
+    "damageDisplay": "",
+    "power": {
+      "roll": { "formula": "@chr", "characteristics": [] },
+      "effects": {}
+    },
+    "effect": {
+      "before": "",
+      "after": "<p>Each enemy in the area is pushed 2 squares.</p>"
+    },
+    "spend": {
+      "text": "",
+      "value": null
+    },
+    "source": { "book": "Monsters", "license": "Draw Steel Creator License" },
+    "_dsid": "wing-buffet",
+    "story": "",
+    "resource": null,
+    "trigger": ""
+  },
+  "_id": "wInGbUfFeTs12R6a",
+  "effects": [],
+  "ownership": { "default": 0 }
+}
+```
+
+#### FreeTriggered Ability Example
+```json
+{
+  "name": "Zephyr Feint",
+  "type": "ability",
+  "system": {
+    "type": "freeTriggered",
+    "category": "",
+    "keywords": [],
+    "distance": { "type": "self" },
+    "target": { "type": "self", "value": null },
+    "damageDisplay": "",
+    "power": {
+      "roll": { "formula": "@chr", "characteristics": [] },
+      "effects": {}
+    },
+    "effect": {
+      "before": "",
+      "after": "<p>Halve the damage and shift up to 3 squares.</p>"
+    },
+    "spend": {
+      "text": "",
+      "value": null
+    },
+    "source": { "book": "Monsters", "license": "Draw Steel Creator License" },
+    "_dsid": "zephyr-feint",
+    "story": "",
+    "resource": null,
+    "trigger": "When the monster takes damage, it can use this ability."
+  },
+  "_id": "zEpHyFeInTjK8L3m",
+  "effects": [],
+  "ownership": { "default": 0 }
+}
+```
+
+#### None Type Ability Example
+```json
+{
+  "name": "Piercing Cry",
+  "type": "ability",
+  "system": {
+    "type": "none",
+    "category": "",
+    "keywords": [],
+    "distance": { "type": "special" },
+    "target": { "type": "special", "value": null, "custom": "" },
+    "damageDisplay": "",
+    "power": {
+      "roll": { "formula": "@chr", "characteristics": [] },
+      "effects": {}
+    },
+    "effect": {
+      "before": "<p>The monster emits a piercing cry that deals 4 sonic damage to each creature in a line 5.</p>",
+      "after": ""
+    },
+    "spend": {
+      "text": "",
+      "value": null
+    },
+    "source": { "book": "Monsters", "license": "Draw Steel Creator License" },
+    "_dsid": "piercing-cry",
+    "story": "",
+    "resource": null,
+    "trigger": ""
+  },
+  "_id": "pIeRcInGcRy4K9nO",
+  "effects": [],
+  "ownership": { "default": 0 }
+}
+```
+
+**NOTE:** When creating abilities for your monster:
+- Use unique names that fit the creature's theme (not "Stinger Strike" unless it's actually a stinger)
+- Adapt damage types and effects to match the creature's abilities
+- Consider the creature's keywords when designing abilities
+- Vary the mechanics from examples to create something unique
 
 ## Step 1: Calculate Stats
 
@@ -1896,22 +2195,32 @@ When generating Markdown stat blocks, include a Malice section:
 ```
 
 **Important - Only add Villain Actions for Leader/Solo organizations:**
+
+**Villain Action Usage Rules (from Monster Basics.md):**
+- Each villain action can be used only once per encounter
+- No more than one villain action can be used per round
+- Villain actions are used at the end of any creature's turn
+- Always generate exactly 3 villain actions:
+  - **Villain Action 1 (opener):** Shows heroes they're not battling a typical creature
+  - **Villain Action 2 (crowd control):** Helps villain regain upper hand after heroes respond
+  - **Villain Action 3 (ult):** Devastating showstopper before the battle ends
+
 ```markdown
 <!-- ONLY for Leader and Solo monsters: -->
 > <!-- -->
 > > ☠️ **Villain Action 1**
 > >
-> > [Effect description]
->
+> > [Effect description - opener: deals damage, summons, buffs, debuffs, or moves]
+> >
 > <!-- -->
 > > ☠️ **Villain Action 2**
 > >
-> > [Effect description]
->
+> > [Effect description - crowd control: more powerful than opener]
+> >
 > <!-- -->
 > > ☠️ **Villain Action 3**
 > >
-> > [Effect description]
+> > [Effect description - ult: devastating blow]
 ```
 
 **For Platoon/Elite/Minion/Horde monsters - stop at malice features, do NOT add villain actions.**

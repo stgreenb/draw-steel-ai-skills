@@ -5,6 +5,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2026-01-30
+
+### Added
+- **Ability Type Examples:** Added examples for maneuver, freeTriggered, and none type abilities
+- **Charge Attack Example:** Added example with "charge" keyword (optional)
+- **Breath Weapon Example:** Added example with correct `["area", "magic"]` keywords
+- **Ability Type Variety Section:** Added documentation covering all ability types and their purposes
+- **Villain Action Usage Rules:** Added 3 usage rules (once per encounter, one per round, end of turn)
+- **Inspiration Guidance:** Added explicit guidance that examples should inspire unique creations, not be copied verbatim
+- **Custom Field Examples:** Added examples showing "custom" field in area targets for clarity
+
+### Changed
+- **Strike Keywords:** All strike examples now include "weapon" keyword
+- **Target Types:** All strike examples now use "creatureObject" instead of "creature"
+- **Breath/Spew Keywords:** Updated to use `["area", "magic"]` pattern instead of damage types
+- **DO/DON'T Table:** Added 5 new rules for strike keywords, target types, breath keywords, custom fields, and inspiration usage
+- **Villain Action Guidance:** Enhanced with specific usage rules from Monster Basics.md
+- **Output Formats:** Added "Using Examples as Inspiration" section to prevent verbatim copying
+
+### Fixed
+- **LLM Compliance:** Updated examples to match official Draw Steel patterns
+- **Foundry VTT Crashes:** Corrected patterns that cause crashes (invalid damage types, missing "weapon" keyword)
+- **Example Copying:** Added guidance to prevent LLMs from copying examples verbatim instead of creating unique abilities
+
 ## [1.2.2] - 2026-01-30
 
 ### Added
