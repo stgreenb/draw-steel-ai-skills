@@ -125,7 +125,7 @@ Use the `--format` option to specify output format:
 
 The validation script catches errors that will cause Foundry VTT import failures:
 - Invalid monster/ability keywords
-- Wrong `_id` format (must be exactly 16 characters)
+- Wrong `_id` format (must match `^[a-zA-Z0-9]{16}$`)
 - Missing malice features for Elite/Leader/Solo monsters
 - Invalid ability types or categories
 
@@ -284,13 +284,13 @@ When generating Foundry VTT JSON, output a JSON object with this EXACT structure
          "resource": null,
          "trigger": ""
        },
-       "_id": "a1B2c3D4e5F67890",  // 16 characters: a-z, A-Z, 0-9 only
+       "_id": "a1B2c3D4e5F67890",  // Matches ^[a-zA-Z0-9]{16}$
        "effects": [],
        "ownership": { "default": 0 }
      }
    ],
   "_stats": { "systemId": "draw-steel", "systemVersion": "0.9.0" },
-  "_id": "sJhjuVdliz3ThjEa"  // 16 characters, unique for each actor
+  "_id": "sJhjuVdliz3ThjEa"  // Matches ^[a-zA-Z0-9]{16}$, unique for each actor
 }
 ```
 
@@ -313,7 +313,7 @@ When generating Foundry VTT JSON, output a JSON object with this EXACT structure
 | `formula: "@chr"` | `formula: "@might"` or `formula: "@agility"` |
 | Keywords lowercase: `["fey", "humanoid"]` | Keywords capitalized: `["Fey", "Humanoid"]` |
 | Keywords match distance type | "Melee" in keywords for ranged abilities |
-| `_id` = 16 alphanumeric chars | UUID like `d4e5f6a7-b8c9-0123-defa-456789012345` (36 chars) |
+| `_id` matches `^[a-zA-Z0-9]{16}$` | UUID like `d4e5f6a7-b8c9-0123-defa-456789012345` |
 | `resource: 3` (integer) for malice cost | `resource: {value: 3}` (object) |
 | `damageDisplay: ""` for area abilities | `damageDisplay: "area"` (invalid choice) |
 | Valid distance types: `burst`, `cube`, `line` | `cone` is NOT a valid area type in Draw Steel! |
@@ -324,7 +324,7 @@ When generating Foundry VTT JSON, output a JSON object with this EXACT structure
 Before outputting JSON with `--format foundry` or `--format both`, verify ALL of these:
 
 - [ ] **Actor type:** `type` is `"npc"` (not `"hero"` or other)
-- [ ] **All `_id` fields:** Exactly 16 alphanumeric characters (no dashes, no UUIDs)
+- [ ] **All `_id` fields:** Must match pattern `^[a-zA-Z0-9]{16}$` (16 alphanumeric chars, no dashes)
 - [ ] **Item types:** All items have `type` of `"ability"` or `"feature"` (no `"class"`, `"ancestry"`, etc.)
 - [ ] **Ability types:** All abilities have valid `system.type`:
   - `main`, `maneuver`, `freeManeuver`, `triggered`, `freeTriggered`, `move`, `none`, `villain`
@@ -398,31 +398,37 @@ $ python .claude/skills/draw-steel-monster-generator/scripts/validate_foundry_js
 **CRITICAL:** Skipping validation will result in JSON that fails to import into Foundry VTT. If you cannot run the validation script, report this as an error rather than skipping validation.
 
 ### ID Format Requirement (CRITICAL!)
-All `_id` fields must be exactly **16 alphanumeric characters** (a-z, A-Z, 0-9 only):
+All `_id` fields must match regex pattern `^[a-zA-Z0-9]{16}$` (exactly 16 alphanumeric chars):
 
 ```json
-// CORRECT (exactly 16 characters):
-"_id": "aB2c3D4e5F6G7890"  // Count: a B 2 c 3 D 4 e 5 F 6 G 7 8 9 0 = 16
+// CORRECT (matches ^[a-zA-Z0-9]{16}$):
+"_id": "aB2c3D4e5F6G7890"
 
-// INCORRECT (15 characters - TOO SHORT):
-"_id": "aB2c3D4e5F67890"   // Only 15 characters - WILL FAIL
+// INCORRECT (15 chars - doesn't match ^[a-zA-Z0-9]{16}$):
+"_id": "aB2c3D4e5F67890"
 
-// INCORRECT (36 characters - UUID format):
-"_id": "d4e5f6a7-b8c9-0123-defa-456789012345"  // WILL FAIL
+// INCORRECT (36 chars - UUID format - doesn't match ^[a-zA-Z0-9]{16}$):
+"_id": "d4e5f6a7-b8c9-0123-defa-456789012345"
+
+// INCORRECT (has dashes - doesn't match ^[a-zA-Z0-9]{16}$):
+"_id": "aB2c-3D4e-5F6G-7890"
 ```
 
-**Count characters carefully:** `aB2c3D4e5F6G7890` = 16 chars
+**Pattern:** `^[a-zA-Z0-9]{16}$` means:
+- Start of string
+- Exactly 16 characters from a-z, A-Z, 0-9
+- End of string (no dashes, no extra chars)
 
-Each item needs its own unique 16-character ID. Example:
+Each item needs its own unique ID. Example:
 ```json
 "items": [
   {
     "name": "Shield Bash",
-    "_id": "sHiElDbAsH123456"  // 16 chars
+    "_id": "sHiElDbAsH123456"
   },
   {
-    "name": "Shield Wall", 
-    "_id": "sHiElDwAlL789012"  // 16 chars, different from first
+    "name": "Shield Wall",
+    "_id": "sHiElDwAlL789012"
   }
 ]
 

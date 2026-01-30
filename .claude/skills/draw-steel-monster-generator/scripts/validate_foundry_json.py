@@ -150,7 +150,7 @@ class ValidationResult:
 
 
 def is_valid_16_char_id(value: str) -> bool:
-    """Check if value is exactly 16 alphanumeric characters."""
+    """Check if value matches pattern ^[a-zA-Z0-9]{16}$ (16 alphanumeric chars)."""
     if not isinstance(value, str):
         return False
     return bool(re.match(r"^[a-zA-Z0-9]{16}$", value))
@@ -305,7 +305,7 @@ def validate_ability_distance(data: dict, result: ValidationResult) -> None:
 
 
 def validate_id_format(data: dict, result: ValidationResult, path: str = "") -> None:
-    """Validate that all _id fields are exactly 16 alphanumeric characters."""
+    """Validate that all _id fields match pattern ^[a-zA-Z0-9]{16}$."""
     if isinstance(data, dict):
         for key, value in data.items():
             new_path = f"{path}.{key}" if path else key
@@ -313,18 +313,18 @@ def validate_id_format(data: dict, result: ValidationResult, path: str = "") -> 
                 if not is_valid_16_char_id(value):
                     if isinstance(value, str) and "-" in value:
                         result.add_error(
-                            f"{new_path} contains UUID format (contains dashes). "
-                            f"Must be exactly 16 alphanumeric characters, got: {value}"
+                            f"{new_path} contains UUID format (has dashes). "
+                            f"Must match pattern ^[a-zA-Z0-9]{{16}}$, got: {value}"
                         )
                     elif isinstance(value, str) and len(value) != 16:
                         result.add_error(
-                            f"{new_path} has invalid length. "
-                            f"Must be exactly 16 characters, got {len(value)}: {value}"
+                            f"{new_path} has invalid length (must be 16). "
+                            f"Must match pattern ^[a-zA-Z0-9]{{16}}$, got {len(value)} chars: {value}"
                         )
                     else:
                         result.add_error(
                             f"{new_path} contains invalid characters. "
-                            f"Must be exactly 16 alphanumeric characters, got: {value}"
+                            f"Must match pattern ^[a-zA-Z0-9]{{16}}$, got: {value}"
                         )
             else:
                 validate_id_format(value, result, new_path)

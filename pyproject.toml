@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ds-monster-generator"
-version = "1.2.0"
+version = "1.2.1"
 description = "Draw Steel TTRPG monster generator with 100% formula compliance"
 authors = ["Draw Steel Community"]
 license = "MIT"
