@@ -382,25 +382,109 @@ def validate_power_effects(data: dict, result: ValidationResult) -> None:
     """
     Validate power effects structure.
 
-    For generated abilities (heroic, signature, villain), power.effects should be empty.
-    For freeStrike or no category, effects may contain data.
+    Rules:
+    1. Main action abilities (type: "main") with power rolls MUST have structured power.effects objects.
+    2. Type "none" abilities can use old format (custom abilities with special rules).
+    3. Triggered/freeTriggered/maneuver abilities CAN have empty power.effects.
     """
     items = data.get("items", [])
     for item in items:
         if item.get("type") == "ability":
             system = item.get("system", {})
-            category = system.get("category")
+            ability_type = system.get("type")
             power = system.get("power", {})
             effects = power.get("effects", {})
+            effect_before = system.get("effect", {}).get("before", "")
+            roll_characteristics = power.get("roll", {}).get("characteristics", [])
+            roll_formula = power.get("roll", {}).get("formula", "")
 
-            is_generated_ability = category in ("heroic", "signature", "villain")
+            # Type "none" abilities are special/custom - they can use old format
+            if ability_type == "none":
+                continue
 
-            if is_generated_ability and effects and len(effects) > 0:
-                result.add_warning(
-                    f"Ability '{item.get('name', 'Unknown')}' has non-empty power.effects. "
-                    f"Generated abilities (heroic, signature, villain) should have empty {{}}. "
-                    f"Found effects with keys: {list(effects.keys())}"
-                )
+            # Check if this ability actually uses a power roll (has characteristics and formula)
+            has_power_roll = (
+                roll_characteristics and len(roll_characteristics) > 0 and roll_formula
+            )
+
+            # Main action abilities with power rolls MUST have structured power.effects
+            is_main_with_power_roll = ability_type == "main" and has_power_roll
+
+            if is_main_with_power_roll:
+                # Check if power.effects is empty (WRONG for main abilities with power rolls)
+                if not effects or len(effects) == 0:
+                    result.add_error(
+                        f"Ability '{item.get('name', 'Unknown')}' is a main action with power roll but has empty power.effects. "
+                        f"Main action abilities with power rolls (signature/heroic/villain) MUST have structured "
+                        f"damage/condition objects in power.effects, not empty {{}}. See SKILL.md for correct format."
+                    )
+
+                # Check if effect.before contains power roll HTML (OLD WRONG FORMAT)
+                if (
+                    "power-roll-display" in effect_before
+                    or "[[/damage" in effect_before
+                ):
+                    result.add_error(
+                        f"Ability '{item.get('name', 'Unknown')}' has power roll data in effect.before. "
+                        f"Power roll data MUST be in power.effects, not effect.before. "
+                        f"Found power-roll-display or [[/damage in effect.before - this is the old format. "
+                        f"Use structured power.effects objects instead."
+                    )
+
+                # Check if effect.before contains power roll HTML (OLD WRONG FORMAT)
+                if (
+                    "power-roll-display" in effect_before
+                    or "[[/damage" in effect_before
+                ):
+                    result.add_error(
+                        f"Ability '{item.get('name', 'Unknown')}' has power roll data in effect.before. "
+                        f"Power roll data MUST be in power.effects, not effect.before. "
+                        f"Found power-roll-display or [[/damage in effect.before - this is the old format. "
+                        f"Use structured power.effects objects instead."
+                    )
+
+                # Check if effect.before contains power roll HTML (OLD WRONG FORMAT)
+                if (
+                    "power-roll-display" in effect_before
+                    or "[[/damage" in effect_before
+                ):
+                    result.add_error(
+                        f"Ability '{item.get('name', 'Unknown')}' has power roll data in effect.before. "
+                        f"Power roll data MUST be in power.effects, not effect.before. "
+                        f"Found power-roll-display or [[/damage in effect.before - this is the old format. "
+                        f"Use structured power.effects objects instead."
+                    )
+            else:
+                # For non-main abilities, warn about old format but don't error
+                if has_power_roll and "power-roll-display" in effect_before:
+                    result.add_warning(
+                        f"Ability '{item.get('name', 'Unknown')}' ({ability_type}) uses old format power-roll-display in effect.before. "
+                        f"This should be moved to power.effects for consistency, though current format may still work."
+                    )
+
+                # Check if effect.before contains power roll HTML (OLD WRONG FORMAT)
+                if (
+                    "power-roll-display" in effect_before
+                    or "[[/damage" in effect_before
+                ):
+                    result.add_error(
+                        f"Ability '{item.get('name', 'Unknown')}' has power roll data in effect.before. "
+                        f"Power roll data MUST be in power.effects, not effect.before. "
+                        f"Found power-roll-display or [[/damage in effect.before - this is the old format. "
+                        f"Use structured power.effects objects instead."
+                    )
+
+                # Check if effect.before contains power roll HTML (OLD WRONG FORMAT)
+                if (
+                    "power-roll-display" in effect_before
+                    or "[[/damage" in effect_before
+                ):
+                    result.add_error(
+                        f"Ability '{item.get('name', 'Unknown')}' has power roll data in effect.before. "
+                        f"Power roll data MUST be in power.effects, not effect.before. "
+                        f"Found power-roll-display or [[/damage in effect.before - this is the old format. "
+                        f"Use structured power.effects objects instead."
+                    )
 
 
 def validate_html_entities(data: dict, result: ValidationResult) -> None:

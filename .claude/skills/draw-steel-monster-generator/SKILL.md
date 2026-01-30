@@ -203,33 +203,92 @@ When generating Foundry VTT JSON, output a JSON object with this EXACT structure
     "disposition": -1,
     "texture": { "src": "systems/draw-steel/assets/roles/brute.webp" }
   },
-  "items": [
-    {
-      "name": "Stinger Strike",
-      "type": "ability",
-      "system": {
-        "type": "main",
-        "category": "signature",
-        "keywords": ["Melee", "Strike"],
-        "distance": { "type": "melee", "primary": 1 },
-        "target": { "type": "creature", "value": 1 },
-        "damageDisplay": "melee",
-        "power": { "roll": { "formula": "@chr", "characteristics": ["agility"] }, "effects": {} },
-        "effect": {
-          "before": "<p><dl class=\"power-roll-display\"><dt class=\"tier1\"><p>!</p></dt><dd><p>[[/damage 6]] poison damage; [[/apply slowed end=save]] (A < -1).</p></dd><dt class=\"tier2\"><p>@</p></dt><dd><p>[[/damage 11]] poison damage; [[/apply slowed end=save]] (A < 0).</p></dd><dt class=\"tier3\"><p>#</p></dt><dd><p>[[/damage 14]] poison damage; [[/apply slowed end=save]] (A < 1).</p></dd></dl></p>",
-          "after": "<p>You shift up to 2 squares.</p>"
-        },
-        "source": { "book": "Monsters", "license": "Draw Steel Creator License" },
-        "_dsid": "stinger-strike",
-        "story": "",
-        "resource": null,
-        "trigger": ""
-      },
-      "_id": "a1B2c3D4e5F67890",  // 16 characters: a-z, A-Z, 0-9 only
-      "effects": [],
-      "ownership": { "default": 0 }
-    }
-  ],
+"items": [
+     {
+       "name": "Stinger Strike",
+       "type": "ability",
+       "system": {
+         "type": "main",
+         "category": "signature",
+         "keywords": ["melee", "strike"],
+         "distance": { "type": "melee", "primary": 1 },
+         "target": { "type": "creature", "value": 1 },
+         "damageDisplay": "melee",
+         "power": {
+           "roll": { "formula": "@chr", "characteristics": ["agility"] },
+           "effects": {
+             "aB3c4D5e6F7g8H9i": {
+               "_id": "aB3c4D5e6F7g8H9i",
+               "type": "damage",
+               "name": "",
+               "img": null,
+               "damage": {
+                 "tier1": {
+                   "value": "6",
+                   "types": ["poison"],
+                   "properties": [],
+                   "potency": { "value": "@potency.weak", "characteristic": "agility" }
+                 },
+                 "tier2": {
+                   "value": "11",
+                   "types": ["poison"],
+                   "properties": [],
+                   "potency": { "value": "@potency.average", "characteristic": "" }
+                 },
+                 "tier3": {
+                   "value": "14",
+                   "types": ["poison"],
+                   "properties": [],
+                   "potency": { "value": "@potency.strong", "characteristic": "" }
+                 }
+               }
+             },
+             "jK9l8M7n6O5p4Q3r": {
+               "_id": "jK9l8M7n6O5p4Q3r",
+               "type": "applied",
+               "name": "Slowed",
+               "img": null,
+               "applied": {
+                 "tier1": {
+                   "display": "{{potency}} slowed (save ends)",
+                   "potency": { "value": "-1", "characteristic": "agility" },
+                   "effects": {
+                     "slowed": { "condition": "failure", "end": "save", "properties": [] }
+                   }
+                 },
+                 "tier2": {
+                   "display": "{{potency}} slowed (save ends)",
+                   "potency": { "value": "0", "characteristic": "agility" },
+                   "effects": {
+                     "slowed": { "condition": "failure", "end": "save", "properties": [] }
+                   }
+                 },
+                 "tier3": {
+                   "display": "{{potency}} slowed (save ends)",
+                   "potency": { "value": "1", "characteristic": "agility" },
+                   "effects": {
+                     "slowed": { "condition": "failure", "end": "save", "properties": [] }
+                   }
+                 }
+               }
+             }
+           }
+         },
+         "effect": {
+           "before": "",
+           "after": "<p>You shift up to 2 squares.</p>"
+         },
+         "source": { "book": "Monsters", "license": "Draw Steel Creator License" },
+         "_dsid": "stinger-strike",
+         "story": "",
+         "resource": null,
+         "trigger": ""
+       },
+       "_id": "a1B2c3D4e5F67890",  // 16 characters: a-z, A-Z, 0-9 only
+       "effects": [],
+       "ownership": { "default": 0 }
+     }
+   ],
   "_stats": { "systemId": "draw-steel", "systemVersion": "0.9.0" },
   "_id": "sJhjuVdliz3ThjEa"  // 16 characters, unique for each actor
 }
@@ -242,14 +301,13 @@ When generating Foundry VTT JSON, output a JSON object with this EXACT structure
 | `characteristics.might.value` | `characteristics.might` alone or `mod/bonus` |
 | `stamina.value` and `stamina.max` | `hp` field |
 | `combat.turns` (Solo=2, others=1) | Missing `combat` section |
-| `power.effects: {}` (empty!) | Complex nested `power.effects` structures |
+| `power.effects` with structured damage/condition objects | HTML power roll display in `effect.before` |
 | `type: "main"` in system | Put type in keywords like `["Main Action"]` |
 | `systems/draw-steel/assets/roles/{role}.webp` | `modules/mcdm-monsters/...` |
 | `prototypeToken` with `disposition: -1` | `token` instead of `prototypeToken` |
 | `_stats.systemId: "draw-steel"` | Missing `_stats` section |
 | `@potency.weak/average/strong` | `@potency.1/2/3` or plain numbers |
-| Use `[[/apply condition]]` in effects | Plain text like "slowed (save ends)" |
-| Power roll HTML in effect.before | Flat list of all damages |
+| `effect.before`/`effect.after` for flavor text | Power roll data in `effect.before` |
 | `["fly"]` for wasps/birds/bats | `["walk", "fly"]` for flying creatures |
 | `disengage: 1` | `disengage: 0` (unless specified) |
 | `formula: "@chr"` | `formula: "@might"` or `formula: "@agility"` |
@@ -288,7 +346,9 @@ Before outputting JSON with `--format foundry` or `--format both`, verify ALL of
   - **Cone-like abilities (breath weapons, sprays):** Use `cube` type, not `cone` or `burst`
 - [ ] **Formula:** All `system.power.roll.formula` equal `"@chr"` (not `"@might"`, `"@agility"`, etc.)
 - [ ] **Keywords lowercase:** All keywords are lowercase (no `"Melee"`, `"Weapon"`, `"Humanoid"`)
-- [ ] **Power effects:** For generated abilities (heroic, signature, villain), `system.power.effects` is empty `{}`
+- [ ] **Power effects:** For abilities with power rolls (signature, heroic, villain), `system.power.effects` contains structured damage/condition objects, NOT empty `{}`
+  - Check: `len(power.effects) > 0` for signature/heroic/villain abilities
+  - Check: `effect.before` does NOT contain `power-roll-display` or `[[/damage`
 - [ ] **No HTML entities:** `system.effect.before` and `system.effect.after` use raw `<`, `>`, `&` not `&lt;`, `&gt;`, `&amp;`
 - [ ] **Required fields:** All required NPC fields present:
   - `system.stamina.value` and `system.stamina.max`
@@ -522,10 +582,283 @@ Elite/Leader/Solo monsters should have at least one heroic ability that costs ma
 
 **Critical:** Elite, Leader, and Solo monsters MUST have at least one ability with `resource: integer > 0`.
 
+### Power Roll Effects Structure (CRITICAL - Read This!)
+
+For abilities with power rolls (signature, heroic, villain), you MUST structure damage and conditions in `system.power.effects` - NOT as HTML in `effect.before`.
+
+**Why this matters:** Foundry VTT parses `power.effects` to create clickable damage buttons, condition applications, and automated power roll outcomes. Putting this data in `effect.before` as HTML breaks Foundry's automation.
+
+**The WRONG way (what Bloodsiphon did - DO NOT DO THIS):**
+```json
+"power": {
+  "roll": {"formula": "@chr", "characteristics": ["agility"]},
+  "effects": {}  // EMPTY - WRONG!
+},
+"effect": {
+  "before": "<p><dl class=\"power-roll-display\"><dt class=\"tier1\">...</dt><dd>[[/damage 10 corruption]]...</dd></dl></p>",
+  "after": "<p>You pull the target 2 squares.</p>"
+}
+```
+
+**The CORRECT way (official format from Basilisk/Goblins/Griffon):**
+```json
+"power": {
+  "roll": {
+    "formula": "@chr",
+    "characteristics": ["agility"]
+  },
+  "effects": {
+    "aB3c4D5e6F7g8H9i": {
+      "_id": "aB3c4D5e6F7g8H9i",
+      "type": "damage",
+      "name": "",
+      "img": null,
+      "damage": {
+        "tier1": {
+          "value": "10",
+          "types": ["corruption"],
+          "properties": [],
+          "potency": {"value": "@potency.weak", "characteristic": "none"}
+        },
+        "tier2": {
+          "value": "18",
+          "types": ["corruption"],
+          "properties": [],
+          "potency": {"value": "@potency.average", "characteristic": ""}
+        },
+        "tier3": {
+          "value": "23",
+          "types": ["corruption"],
+          "properties": [],
+          "potency": {"value": "@potency.strong", "characteristic": ""}
+        }
+      }
+    },
+    "jK9l8M7n6O5p4Q3r": {
+      "_id": "jK9l8M7n6O5p4Q3r",
+      "type": "forced",
+      "name": "Pull",
+      "img": null,
+      "forced": {
+        "tier1": {
+          "movement": ["pull"],
+          "distance": "2",
+          "display": "{{potency}} {{forced}}",
+          "properties": [],
+          "potency": {"value": "0", "characteristic": "agility"}
+        },
+        "tier2": {
+          "movement": ["pull"],
+          "distance": "2",
+          "display": "{{potency}} {{forced}}",
+          "properties": [],
+          "potency": {"value": "1", "characteristic": "agility"}
+        },
+        "tier3": {
+          "movement": ["pull"],
+          "distance": "2",
+          "display": "{{potency}} {{forced}}",
+          "properties": [],
+          "potency": {"value": "2", "characteristic": "agility"}
+        }
+      }
+    },
+    "xY9z8W7v6U5t4S3r": {
+      "_id": "xY9z8W7v6U5t4S3r",
+      "type": "applied",
+      "name": "Grabbed",
+      "img": null,
+      "applied": {
+        "tier1": {
+          "display": "{{potency}} grabbed",
+          "potency": {"value": "0", "characteristic": "agility"},
+          "effects": {
+            "grabbed": {"condition": "failure", "end": "", "properties": []}
+          }
+        },
+        "tier2": {
+          "display": "{{potency}} grabbed",
+          "potency": {"value": "1", "characteristic": "agility"},
+          "effects": {
+            "grabbed": {"condition": "failure", "end": "", "properties": []}
+          }
+        },
+        "tier3": {
+          "display": "{{potency}} grabbed (save ends)",
+          "potency": {"value": "2", "characteristic": "agility"},
+          "effects": {
+            "grabbed": {"condition": "failure", "end": "save", "properties": []}
+          }
+        }
+      }
+    }
+  }
+},
+"effect": {
+  "before": "",
+  "after": "<p>You pull the target 2 squares.</p>"
+}
+```
+
+**Key Rules:**
+
+1. **Each effect gets a unique 16-char `_id`** - generate these for each effect object
+2. **Damage effects use `type: "damage"`** with `damage.tier1/tier2/tier3.value` as strings
+3. **Condition effects use `type: "applied"`** with `applied.tier1/tier2/tier3.display` and `effects` object
+4. **Force movement uses `type: "forced"`** with `forced.tier1/tier2/tier3.movement` array
+5. **Potency values:**
+   - `@potency.weak` for tier1 when no characteristic check
+   - `@potency.average` for tier2 when no characteristic check
+   - `@potency.strong` for tier3 when no characteristic check
+   - Numeric values like `"0"`, `"1"`, `"2"` when using characteristic checks
+   - Characteristic field: `"none"` for no check, `"agility"`/`"might"`/etc. for characteristic-based
+6. **effect.before/after** are for flavor text ONLY - never put power roll data here
+
+**Example: Simple damage-only ability (Goblin Warrior - Spear Charge):**
+```json
+"power": {
+  "roll": {"formula": "@chr", "characteristics": ["agility"]},
+  "effects": {
+    "Y0x6xGOw9jHthmy2": {
+      "type": "damage",
+      "_id": "Y0x6xGOw9jHthmy2",
+      "damage": {
+        "tier1": {
+          "value": "3",
+          "types": [],
+          "properties": [],
+          "potency": {"value": "@potency.weak", "characteristic": "none"}
+        },
+        "tier2": {
+          "value": "4",
+          "types": [],
+          "properties": [],
+          "potency": {"value": "@potency.average", "characteristic": ""}
+        },
+        "tier3": {
+          "value": "5",
+          "types": [],
+          "properties": [],
+          "potency": {"value": "@potency.strong", "characteristic": ""}
+        }
+      }
+    }
+  }
+}
+```
+
+**Example: Damage + movement effect (Griffon - Claw Swipes):**
+```json
+"power": {
+  "roll": {"formula": "@chr", "characteristics": ["might"]},
+  "effects": {
+    "nhjhxzjjens59Vpd": {
+      "type": "damage",
+      "_id": "nhjhxzjjens59Vpd",
+      "damage": {
+        "tier1": {"value": "7", "types": [], "properties": [], "potency": {"value": "@potency.weak", "characteristic": "none"}},
+        "tier2": {"value": "10", "types": [], "properties": [], "potency": {"value": "@potency.average", "characteristic": ""}},
+        "tier3": {"value": "13", "types": [], "properties": [], "potency": {"value": "@potency.strong", "characteristic": ""}}
+      }
+    },
+    "O5Bl6Quw9y6pfpTd": {
+      "type": "other",
+      "_id": "O5Bl6Quw9y6pfpTd",
+      "other": {
+        "tier1": {"display": "the griffon can shift 1 square", "potency": {"value": "@potency.weak", "characteristic": "none"}},
+        "tier2": {"display": "the griffon shifts up to 2 squares", "potency": {"value": "@potency.average", "characteristic": ""}},
+        "tier3": {"display": "the griffon shifts up to 3 squares", "potency": {"value": "@potency.strong", "characteristic": ""}}
+      }
+    }
+  }
+}
+```
+
+**Example: Damage + condition with potency check (Basilisk - Noxious Bite):**
+```json
+"power": {
+  "roll": {"formula": "@chr", "characteristics": ["might"]},
+  "effects": {
+    "2zbjEF3LsDPSQ9zO": {
+      "type": "damage",
+      "_id": "2zbjEF3LsDPSQ9zO",
+      "damage": {
+        "tier1": {"value": "7", "types": ["poison"], "properties": [], "potency": {"value": "@potency.weak", "characteristic": "none"}},
+        "tier2": {"value": "10", "types": ["poison"], "properties": [], "potency": {"value": "@potency.average", "characteristic": ""}},
+        "tier3": {"value": "13", "types": ["poison"], "properties": [], "potency": {"value": "@potency.strong", "characteristic": ""}}
+      }
+    }
+  }
+}
+```
+
+**When to use which effect type:**
+
+| Effect Type | Use For | Example |
+|-------------|---------|---------|
+| `damage` | Any damage, including with conditions | Strike with poison damage |
+| `applied` | Conditions (prone, grabbed, slowed, etc.) | "A < 1, prone" |
+| `forced` | Push, pull, slide force movement | "push 2 squares" |
+| `other` | Flavor text, movement, non-mechanical effects | "shift up to 2 squares" |
+
+**When can power.effects be empty?**
+
+| Ability Type | power.effects | Reason |
+|--------------|---------------|---------|
+| `type: "main"` | MUST have structured effects | These are power roll abilities |
+| `type: "triggered"` | Can be empty | Reactions (e.g., "when damaged, make free strike") |
+| `type: "freeTriggered"` | Can be empty | Free reactions (e.g., "when adjacent, shift") |
+| `type: "maneuver"` | Can be empty | Movement/positioning (e.g., "fly up to speed") |
+| `type: "none"` | Can be empty OR old format | Custom abilities with special rules |
+
+**Examples:**
+
+- **Main action (MUST have effects):** Spear Charge, Noxious Bite, Claw Swipes
+- **Triggered (can be empty):** Zephyr Feint ("when griffon takes damage, halve damage and shift")
+- **FreeTriggered (can be empty):** Don't Turn Away ("when creature leaves aura, dragon shifts")
+- **Maneuver (can be empty):** Swoop ("fly up to speed, make free strikes")
+- **None (custom):** Piercing Cry, Swamp Stink (can use old HTML format in effect.before)
+
+**Quick Reference: Effect Structure Template**
+
+```json
+"effects": {
+  "[UNIQUE_16_CHAR_ID]": {
+    "_id": "[UNIQUE_16_CHAR_ID]",
+    "type": "damage|applied|forced|other",
+    "name": "Display Name (optional)",
+    "img": null,
+    "[damage|applied|forced|other]": {
+      "tier1": {
+        "value|display": "string value",
+        "types": ["damage", "types"],  // for damage only
+        "movement": ["push", "pull", "slide"],  // for forced only
+        "distance": "2",  // for forced only
+        "properties": [],
+        "potency": {
+          "value": "@potency.weak|@potency.average|@potency.strong|numeric",
+          "characteristic": "none|might|agility|reason|intuition|presence"
+        },
+        "effects": {  // for applied only
+          "[condition]": {
+            "condition": "failure|success",
+            "end": "save|turn|encounter|respite|",
+            "properties": []
+          }
+        }
+      },
+      "tier2": { /* same structure */ },
+      "tier3": { /* same structure */ }
+    }
+  }
+}
+```
+
 ### Effect Types in `system.power.effects`
 - Damage effects → `"type": "damage"` with nested `damage: { tier1: {...}, tier2: {...}, tier3: {...} }`
 - Condition effects → `"type": "applied"` with nested `applied: { tier1: {...}, ... }`
-- Force movement → `"type": "forced"`
+- Force movement → `"type": "forced"` with nested `forced: { tier1: {...}, ... }`
+- Other effects → `"type": "other"` with nested `other: { tier1: {...}, ... }`
 
 ## Step 1: Calculate Stats
 
