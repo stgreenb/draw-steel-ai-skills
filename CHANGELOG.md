@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - 2026-02-01
+
+### Added
+- **ID Generator Script:** Added `scripts/generate_foundry_ids.py` to generate unique 16-character alphanumeric IDs for Foundry VTT JSON
+- **Duplicate ID Detection:** Enhanced validation script to detect duplicate `_id` values within the same JSON file
+- **ID Generation Workflow:** Updated SKILL.md with instructions to use the ID generator script instead of manual generation
+- **Self-Validation Checklist:** Updated to require use of ID generator script and check for duplicate IDs
+
+### Changed
+- **ID Format Instructions:** Replaced manual ID generation examples with script usage examples
+- **Validation Error Messages:** Added guidance to use ID generator script when duplicate IDs are detected
+
+### Fixed
+- **ID Generation Errors:** Eliminated common LLM errors (wrong length, dashes, placeholders, duplicates) by providing automated ID generation
+
 ## [1.3.0] - 2026-01-30
 
 ### Added

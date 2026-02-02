@@ -333,6 +333,48 @@ def validate_id_format(data: dict, result: ValidationResult, path: str = "") -> 
             validate_id_format(item, result, f"{path}[{i}]")
 
 
+def validate_duplicate_ids(data: dict, result: ValidationResult) -> None:
+    """Validate that all _id fields within the same JSON file are unique."""
+    if isinstance(data, dict):
+        # Collect all _id values recursively
+        ids = []
+        path_to_id = {}
+
+        def collect_ids(obj, path=""):
+            if isinstance(obj, dict):
+                for key, value in obj.items():
+                    new_path = f"{path}.{key}" if path else key
+                    if key == "_id":
+                        if isinstance(value, str):
+                            ids.append(value)
+                            if value not in path_to_id:
+                                path_to_id[value] = []
+                            path_to_id[value].append(new_path)
+                    else:
+                        collect_ids(value, new_path)
+            elif isinstance(obj, list):
+                for i, item in enumerate(obj):
+                    collect_ids(item, f"{path}[{i}]")
+
+        collect_ids(data)
+
+        # Check for duplicates
+        seen = set()
+        duplicates = set()
+        for id_value in ids:
+            if id_value in seen:
+                duplicates.add(id_value)
+            seen.add(id_value)
+
+        if duplicates:
+            for dup_id in duplicates:
+                paths = path_to_id.get(dup_id, [])
+                result.add_error(
+                    f"Duplicate _id value found: '{dup_id}' appears {len(paths)} times at: {', '.join(paths)}. "
+                    f"Use 'scripts/generate_foundry_ids.py' to generate unique IDs."
+                )
+
+
 def validate_formula_syntax(data: dict, result: ValidationResult) -> None:
     """Validate that power.roll.formula equals '@chr'."""
     items = data.get("items", [])
@@ -903,6 +945,78 @@ def validate_damage_types(data: dict, result: ValidationResult) -> None:
                                 )
 
 
+def validate_dice_notation(data: dict, result: ValidationResult) -> None:
+    """Validate that effect text does not contain D&D-style dice notation (d4, d8, d12, d20).
+
+    Draw Steel uses d3, d6, d10 for specific mechanics, but D&D-style dice
+    (d4, d8, d12, d20) are not valid and indicate D&D/PF2e influence.
+    """
+    import re
+
+    # D&D dice types to flag (not valid in Draw Steel)
+    invalid_dice = {"d4", "d8", "d12", "d20"}
+    # Draw Steel dice types (valid but rarely used)
+    valid_dice = {"d3", "d6", "d10"}
+
+    items = data.get("items", [])
+    for item in items:
+        if item.get("type") == "ability":
+            system = item.get("system", {})
+            ability_name = item.get("name", "Unknown")
+
+            # Check effect.before and effect.after text
+            for field in ["before", "after"]:
+                text = system.get("effect", {}).get(field, "")
+
+                # Find all dice notation patterns (more flexible regex)
+                # Matches: 1d4, 2d8, 1d12, 3d20, etc. (case-insensitive)
+                dice_matches = re.findall(r"\d+d\d+", text, re.IGNORECASE)
+
+                for dice in dice_matches:
+                    dice_lower = dice.lower()
+
+                    # Check if it's D&D-style dice (d4, d8, d12, d20)
+                    for invalid_die in invalid_dice:
+                        if invalid_die in dice_lower:
+                            result.add_error(
+                                f"Ability '{ability_name}' contains D&D-style dice notation '{dice}' "
+                                f"in {field} text. Draw Steel uses fixed damage values, not {invalid_die}."
+                            )
+                            break
+
+                    # Check for other invalid dice (not d3, d6, d10)
+                    dice_parts = dice_lower.split("d")
+                    if len(dice_parts) == 2:
+                        die_type = "d" + dice_parts[1]
+                        if die_type not in valid_dice and die_type not in invalid_dice:
+                            result.add_error(
+                                f"Ability '{ability_name}' contains invalid dice notation '{dice}' "
+                                f"in {field} text. Draw Steel uses fixed damage values, not dice."
+                            )
+                            break
+
+                    # Check for other invalid dice (not d3, d6, d10)
+                    dice_parts = dice_lower.split("d")
+                    if len(dice_parts) == 2:
+                        die_type = "d" + dice_parts[1]
+                        if die_type not in valid_dice and die_type not in invalid_dice:
+                            result.add_error(
+                                f"Ability '{ability_name}' contains invalid dice notation '{dice}' "
+                                f"in {field} text. Draw Steel uses fixed damage values, not dice."
+                            )
+                            break
+
+                    # Check for other invalid dice (not d3, d6, d10)
+                    dice_parts = dice_lower.split("d")
+                    if len(dice_parts) == 2:
+                        die_type = "d" + dice_parts[1]
+                        if die_type not in valid_dice and die_type not in invalid_dice:
+                            result.add_error(
+                                f"Ability '{ability_name}' contains invalid dice notation '{dice}' "
+                                f"in {field} text. Draw Steel uses fixed damage values, not dice."
+                            )
+
+
 def validate_json_file(filepath: str) -> ValidationResult:
     """
     Validate a single JSON file and return a ValidationResult.
@@ -931,6 +1045,7 @@ def validate_json_file(filepath: str) -> ValidationResult:
     validate_feature_keywords(data, result)
     validate_ability_distance(data, result)
     validate_id_format(data, result)
+    validate_duplicate_ids(data, result)
     validate_formula_syntax(data, result)
     validate_keywords_lowercase(data, result)
     validate_power_effects(data, result)
@@ -943,6 +1058,7 @@ def validate_json_file(filepath: str) -> ValidationResult:
     validate_malice_costs(data, result)
     validate_spend_field(data, result)
     validate_damage_types(data, result)
+    validate_dice_notation(data, result)
 
     return result
 
