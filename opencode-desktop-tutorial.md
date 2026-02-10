@@ -21,7 +21,7 @@ This tutorial will walk you through installing OpenCode Desktop on Windows 11 an
    - Find "OpenCode Desktop" in your Start Menu and open it
    - The application will take a moment to initialize on first launch
 
-**Good news!** OpenCode Zen offers free models (like GLM 4.7 Free, Kimi K2.5 Free, and others) that you can use at no cost. These free models are available for a limited time while the team collects feedback. You can access them by running the `/connect` command in OpenCode and selecting OpenCode Zen. [opencode](https://opencode.ai/docs/zen/)
+**Good news!** OpenCode Zen offers free models (like GLM 4.7 Free, Kimi K2.5 Free, and others) that you can use at no cost. Many will work well with the monster generator but try differen't ones. If you don't see them avaiblie you try running the `/connect` command in OpenCode and selecting OpenCode Zen. [opencode](https://opencode.ai/docs/zen/)
 
 ## Install Node.js (Required for Adding Skills)
 
@@ -47,7 +47,7 @@ OpenCode needs Node.js to install Agent Skills easily. Here's how to install it:
 
 ## Download the Monster Generator Skill Files
 
-Since you're not familiar with GitHub, here's the easiest way to get the skill files:
+If you are not familiar with GitHub, here's the easiest way to get the skill files:
 
 1. **Visit the GitHub Page**
    - Open your web browser and go to: [https://github.com/stgreenb/draw-steel-monster-generator](https://github.com/stgreenb/draw-steel-monster-generator)
@@ -114,7 +114,7 @@ Agent Skills are discovered by OpenCode when placed in specific folders. Here's 
 
 3. **Use the Monster Generator**
    - Simply mention what you want in your prompt, and OpenCode will automatically use the skill when relevant [opencode](https://opencode.ai/docs/skills/)
-   - Example: "Create a level 5 undead creature for Draw Steel"
+   - Example: "Create a level 5 undead harrier for Draw Steel"
    - Example: "Use the draw-steel-monsters skill to generate a warrior enemy"
    - OpenCode will load the skill instructions and help you create custom monster stat blocks for your Draw Steel RPG campaigns
 
