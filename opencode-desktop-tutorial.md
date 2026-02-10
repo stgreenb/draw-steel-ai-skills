@@ -21,6 +21,8 @@ This tutorial will walk you through installing OpenCode Desktop on Windows 11 an
    - Find "OpenCode Desktop" in your Start Menu and open it
    - The application will take a moment to initialize on first launch
 
+**Good news!** OpenCode Zen offers free models (like GLM 4.7 Free, Kimi K2.5 Free, and others) that you can use at no cost. These free models are available for a limited time while the team collects feedback. You can access them by running the `/connect` command in OpenCode and selecting OpenCode Zen. [opencode](https://opencode.ai/docs/zen/)
+
 ## Install Node.js (Required for Adding Skills)
 
 OpenCode needs Node.js to install Agent Skills easily. Here's how to install it: [aiengineerguide](https://aiengineerguide.com/blog/add-agent-skills-using-add-skill/)
