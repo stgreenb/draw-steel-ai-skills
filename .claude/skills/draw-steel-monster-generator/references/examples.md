@@ -278,12 +278,14 @@ type: monster
 ### Calculations
 - **Level:** 5 (Echelon 2)
 - **Highest Characteristic:** +3 (1 + echelon) +1 (Solo bonus) = **+4**
+- **Organization:** Solo (×6 for EV/Stamina, +2 damage modifier, 2 targets)
 - **EV:** `ceil(((2×5)+4) × 6.0) = ceil(14 × 6) = 84`
 - **Stamina:** `ceil(((10×5)+30) × 6.0) = ceil(80 × 6) = 480`
-- **Damage T1:** `ceil((4+5+1) × 0.6 × 6) = ceil(10 × 6) = 60` (Strike bonus +4 = **64**)
-- **Damage T2:** `ceil((4+5+1) × 1.1 × 6) = ceil(11 × 6) = 66` (Strike bonus +4 = **70**)
-- **Damage T3:** `ceil((4+5+1) × 1.4 × 6) = ceil(14 × 6) = 84` (Strike bonus +4 = **88**)
-- **Free Strike:** 64 (T1 damage with strike bonus)
+- **Damage T1:** `ceil((4+5+2) × 0.6) = ceil(6.6) = 7` (Solo +2 damage, NO org multiplier!)
+- **Damage T2:** `ceil((4+5+2) × 1.1) = ceil(12.1) = 13`
+- **Damage T3:** `ceil((4+5+2) × 1.4) = ceil(15.4) = 16`
+- **Free Strike:** 7 (T1 damage, strike bonus +4 = **11**)
+- **Targets:** 2 (Solo default)
 - **Potencies:** Might +4 → T1: +2, T2: +3, T3: +4
 
 ### Stat Block
@@ -293,9 +295,9 @@ ancestry:
   - Giant
   - Humanoid
 ev: '84'
-file_basename: Hill Giant Brute
+file_basename: Hill Giant Solo
 file_dpath: Monsters/Giants/Statblocks
-free_strike: '64'
+free_strike: '7'
 level: 5
 might: 4
 agility: 0
@@ -388,10 +390,10 @@ type: monster
 ### Validation Checklist
 - [x] EV: 84 = ceil(((2×5)+4) × 6) ✓
 - [x] Stamina: 480 = ceil(((10×5)+30) × 6) ✓
-- [x] Free Strike: 64 = T1 damage + strike bonus ✓
-- [x] Damage T1: 64 = ceil((4+5+1) × 0.6 × 6) + 4 ✓
-- [x] Damage T2: 70 = ceil((4+5+1) × 1.1 × 6) + 4 ✓
-- [x] Damage T3: 88 = ceil((4+5+1) × 1.4 × 6) + 4 ✓
+- [x] Free Strike: 7 = ceil((4+5+2) × 0.6) ✓
+- [x] Damage T1: 7 = ceil((4+5+2) × 0.6) ✓ (Solo +2, NO org multiplier!)
+- [x] Damage T2: 13 = ceil((4+5+2) × 1.1) ✓
+- [x] Damage T3: 16 = ceil((4+5+2) × 1.4) ✓
 - [x] Characteristics: Might +4 (3 + echelon +1 solo) ✓
 - [x] Potencies: M < 2, M < 3, M < 4 (Might 4 → Weak 2, Avg 3, Strong 4) ✓
 - [x] Targets: 2 (Solo) ✓
@@ -399,7 +401,8 @@ type: monster
 - [x] Speed: 6 ✓
 
 ### Generation Notes
-- **Why Solo Brute?** Hill giants are powerful, slow hitters perfect for Solo play
+- **Why Solo?** Hill giants are powerful enough to challenge a full party alone
+- **Damage:** Solo monsters get +2 damage modifier, NOT ×6 multiplier!
 - **Strike Bonus:** Added +4 to all strike damage
 - **Potencies:** Using official formula (Highest - 2/1/0)
 - **Villain Actions:** Added 3 dramatic actions for climactic encounters
@@ -413,14 +416,15 @@ type: monster
 ### Calculations
 - **Level:** 4 (Echelon 1)
 - **Highest Characteristic:** +2 (Reason)
+- **Organization:** Elite (×2 for EV/Stamina, +1 damage modifier, 2 targets)
 - **EV:** `ceil(((2×4)+4) × 2.0) = ceil(12 × 2) = 24`
 - **Stamina:** `ceil(((10×4)+10) × 2.0) = ceil(50 × 2) = 100`
-- **Damage T1:** `ceil((4+4+0) × 0.6 × 2) = ceil(8 × 2) = 16` (no strike)
-- **Damage T2:** `ceil((4+4+0) × 1.1 × 2) = ceil(9 × 2) = 18`
-- **Damage T3:** `ceil((4+4+0) × 1.4 × 2) = ceil(11 × 2) = 22`
-- **Free Strike:** 16
-- **Targets:** 2 (Elite)
-- **Damage Scaling:** 0.8x for 2 targets → T1: 13, T2: 14, T3: 18
+- **Damage T1:** `ceil((4+4+0) × 0.6) = ceil(4.8) = 5` (no org multiplier!)
+- **Damage T2:** `ceil((4+4+0) × 1.1) = ceil(8.8) = 9`
+- **Damage T3:** `ceil((4+4+0) × 1.4) = ceil(11.2) = 12`
+- **Free Strike:** 5
+- **Targets:** 2 (Elite default)
+- **Damage Scaling:** 0.8x for 2 targets → T1: 4, T2: 8, T3: 10
 
 ### Stat Block
 ```markdown
@@ -432,7 +436,7 @@ ancestry:
 ev: '24'
 file_basename: Shadow Elf Hexer Elite
 file_dpath: Monsters/Shadow Elves/Statblocks
-free_strike: '16'
+free_strike: '5'
 level: 4
 might: 0
 agility: 2
@@ -487,10 +491,10 @@ type: monster
 ### Validation Checklist
 - [x] EV: 24 = ceil(((2×4)+4) × 2) ✓
 - [x] Stamina: 100 = ceil(((10×4)+10) × 2) ✓
-- [x] Free Strike: 16 = T1 damage ✓
-- [x] Damage T1: 13 = ceil((4+4+0) × 0.6 × 2) × 0.8 ✓
-- [x] Damage T2: 14 = ceil((4+4+0) × 1.1 × 2) × 0.8 ✓
-- [x] Damage T3: 18 = ceil((4+4+0) × 1.4 × 2) × 0.8 ✓
+- [x] Free Strike: 5 = ceil((4+4+0) × 0.6) ✓
+- [x] Damage T1: 4 = ceil((4+4+0) × 0.6) × 0.8 ✓ (no org multiplier on damage!)
+- [x] Damage T2: 8 = ceil((4+4+0) × 1.1) × 0.8 ✓
+- [x] Damage T3: 10 = ceil((4+4+0) × 1.4) × 0.8 ✓
 - [x] Targets: 2 (Elite) ✓
 - [x] Damage scaling: 0.8x applied ✓
 - [x] Potencies: R < 0, R < 1, R < 2 (Reason 2 → Weak 0, Avg 1, Strong 2) ✓
@@ -498,8 +502,9 @@ type: monster
 
 ### Generation Notes
 - **Why Elite Controller?** Shadow elves make excellent elite magical combatants
+- **Organization:** Elite uses ×2 for EV/Stamina, NOT for damage!
 - **Target rules:** Elite targets 2 creatures by default
-- **Damage scaling:** 0.8x applied for 2 targets (16×0.8=13)
+- **Damage scaling:** 0.8x applied for 2 targets (5×0.8=4)
 - **Potencies:** Using official formula (Highest - 2/1/0)
 
 ---

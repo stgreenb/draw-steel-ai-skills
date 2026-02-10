@@ -553,6 +553,102 @@ def validate_html_entities(data: dict, result: ValidationResult) -> None:
                 )
 
 
+def validate_role_organization_consistency(
+    data: dict, result: ValidationResult
+) -> None:
+    """Validate that role and organization are compatible.
+
+    Based on analysis of 427 official Draw Steel monsters:
+    - Solo monsters: role must be "solo" or "" (empty) - never other roles
+    - Leader monsters: role must be "leader" or "" (empty) - never other roles
+    - Other organizations: role should not be "solo" or "leader"
+
+    Common error: Solo monster with role="harrier" or other non-solo role.
+    """
+    system = data.get("system", {})
+    monster = system.get("monster", {})
+    org = monster.get("organization", "")
+    role = monster.get("role", "")
+
+    # Solo monsters should have role="solo" or role=""
+    if org == "solo" and role not in ("solo", ""):
+        result.add_error(
+            f"Monster with 'solo' organization has invalid role '{role}'. "
+            f"Solo monsters must have role='solo' or role='' (empty), not '{role}'. "
+            f"Official Draw Steel solo monsters use role='solo' (47.8%) or role='' (52.2%)."
+        )
+
+    # Leader monsters should have role="leader" or role=""
+    elif org == "leader" and role not in ("leader", ""):
+        result.add_error(
+            f"Monster with 'leader' organization has invalid role '{role}'. "
+            f"Leader monsters must have role='leader' or role='' (empty), not '{role}'. "
+            f"Official Draw Steel leader monsters use role='leader' (34.4%) or role='' (65.6%)."
+        )
+
+    # Other organizations should not use solo/leader as role
+    elif org in ("minion", "horde", "platoon", "elite") and role in ("solo", "leader"):
+        result.add_error(
+            f"Monster with '{org}' organization has role '{role}'. "
+            f"The '{role}' role is reserved for solo/leader organization monsters. "
+            f"Use a standard role for {org} monsters (ambusher, artillery, brute, controller, "
+            f"defender, harrier, hexer, mount, support)."
+        )
+
+
+def validate_maneuver_presence(data: dict, result: ValidationResult) -> None:
+    """Validate that non-minion creatures have at least one maneuver ability.
+
+    Based on analysis of 427 official Draw Steel monsters:
+    - Solo: 100% have maneuvers (strong requirement)
+    - Leader: 93.8% have maneuvers (very strong pattern)
+    - Elite: 80.6% have maneuvers (strong pattern)
+    - Horde: 71.1% have maneuvers (moderate pattern)
+    - Platoon: 67.6% have maneuvers (moderate pattern)
+    - Minion: 13% have maneuvers (clearly optional)
+
+    Maneuvers are movement/positioning abilities that don't consume main actions (type: "maneuver").
+    """
+    system = data.get("system", {})
+    monster = system.get("monster", {})
+    org = monster.get("organization", "")
+    items = data.get("items", [])
+
+    # Minions don't require maneuvers - skip validation
+    if org == "minion":
+        return
+
+    # Count maneuver abilities
+    has_manuver = False
+    manuver_names = []
+    for item in items:
+        if item.get("type") == "ability":
+            system_data = item.get("system", {})
+            if system_data.get("type") == "maneuver":
+                has_manuver = True
+                manuver_names.append(item.get("name", "Unknown"))
+
+    # Solo and Leader monsters MUST have at least one maneuver
+    if org in ("solo", "leader"):
+        if not has_manuver:
+            result.add_error(
+                f"Monster with '{org}' organization must have at least one maneuver ability "
+                f"(type: 'maneuver'). Official Draw Steel monsters show {org} creatures with 100% "
+                f"(solo) or 93.8% (leader) maneuver adoption. Maneuvers are movement/positioning abilities "
+                f"that don't consume main actions, such as shifts, pushes, or positioning effects."
+            )
+    # Elite, Horde, and Platoon monsters should have at least one maneuver (warning)
+    elif org in ("elite", "horde", "platoon"):
+        if not has_manuver:
+            result.add_warning(
+                f"Monster with '{org}' organization has no maneuver abilities. "
+                f"Most official Draw Steel {org} monsters have at least one maneuver "
+                f"(Elite: 80.6%, Horde: 71.1%, Platoon: 67.6%). Consider adding a movement/positioning "
+                f"ability (type: 'maneuver') like shifts, pushes, or repositioning to make the creature "
+                f"more dynamic in combat."
+            )
+
+
 def validate_damage_display(data: dict, result: ValidationResult) -> None:
     """Validate that damageDisplay is properly set for abilities.
 
@@ -1040,6 +1136,7 @@ def validate_json_file(filepath: str) -> ValidationResult:
     validate_ability_category(data, result)
     validate_monster_role(data, result)
     validate_monster_organization(data, result)
+    validate_role_organization_consistency(data, result)
     validate_monster_keywords(data, result)
     validate_ability_keywords(data, result)
     validate_feature_keywords(data, result)
@@ -1052,6 +1149,7 @@ def validate_json_file(filepath: str) -> ValidationResult:
     validate_html_entities(data, result)
     validate_required_fields(data, result)
     validate_token_config(data, result)
+    validate_maneuver_presence(data, result)
     validate_damage_display(data, result)
     validate_malice_resource(data, result)
     validate_villain_actions(data, result)

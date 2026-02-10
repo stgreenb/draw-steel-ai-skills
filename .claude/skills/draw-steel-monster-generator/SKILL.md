@@ -73,12 +73,43 @@ Generate Draw Steel TTRPG monsters that strictly conform to official MCDM stat b
 - Ability concepts (fire breath → create NEW area fire ability with Draw Steel formulas)
 - Damage types and malice features (use Draw Steel damage types only)
 
+### Conversion Rules
+
+**Extract from source (for inspiration):**
+- Theme & creature type (fire dragon → fire keywords, dragon abilities)
+- Ability concepts (fire breath → create NEW area fire ability with Draw Steel formulas)
+- Damage types and malice features (use Draw Steel damage types only)
+
 **Calculate using Draw Steel math:**
 - **Stamina:** `ceil(((10 × Level) + Role_Stamina_Modifier) × Organization_Modifier)`
+  - ⚠️ **Solo monsters:** Role Modifier **+30**, Org Modifier **×6** → L1 Solo: `ceil((10+30)×6) = 240`
+  - ⚠️ **Leader monsters:** Role Modifier **+0**, Org Modifier **×2** → L2 Leader: `ceil((20+0)×2) = 40`
+  - ⚠️ **Elite/Platoon/Horde/Minion:** See table below
 - **EV:** `ceil(((2 × Level) + 4) × Organization_Modifier)`
-- **Damage:** `ceil((4 + Level + Role_Damage_Modifier) × Tier_Modifier)`
+- **Damage:** `ceil((4 + Level + Role_Damage_Modifier) × Tier_Modifier)` ← **NO organization modifier!**
 - **Characteristics:** Based on echelon (Levels 1-2=+1, 3-4=+2, 5-6=+3, 7-8=+4, 9-10=+5)
 - **Malice Features:** 2 for Elite/Leader, 3 for Solo (0 for Minion/Horde)
+
+### Modifiers Quick Reference
+
+| Organization | Org Modifier | Role (if not Solo/Leader) | Role Modifier | Damage Modifier |
+|--------------|--------------|---------------------------|---------------|-----------------|
+| Solo | ×6 | `"solo"` or `""` | +30 | +2 |
+| Leader | ×2 | `"leader"` or `""` | +30 | +1 |
+| Elite | ×2 | Any role | See below | +1 (stacks with role) |
+| Platoon | ×1 | Any role | See below | +0 or +1 |
+| Horde | ×0.5 | Any role | See below | +0 or +1 |
+| Minion | ×0.5 | Any role | See below | +0 or +1 |
+
+**Stamina Formula Examples:**
+- L1 Solo: `ceil((10+30)×6) = 240`
+- L2 Leader: `ceil((20+30)×2) = 100`
+- L5 Elite Brute: `ceil((50+30)×2) = 160`
+- L3 Platoon Harrier: `ceil((30+20)×1) = 50`
+- L1 Horde Controller: `ceil((10+10)×0.5) = 10`
+- L2 Minion Brute: `ceil((20+30)×0.5) = 25`
+
+**CRITICAL - Damage Calculation:** The Organization Modifier (×6 for Solo, ×2 for Elite/Leader) is used ONLY for EV and Stamina, NOT for damage! Solo monsters get their damage boost from the Solo damage modifier (+2), not from multiplying by 6.
 
 **Never copy:**
 - HP, damage, attack bonuses from source systems
@@ -228,6 +259,8 @@ The monster stat block is provided below. For detailed error information includi
 | **none** | Custom abilities with unique rules | Piercing Cry, Special trap |
 | **villain** | Solo/Leader only - 3 per monster, once per encounter, NO malice cost | Breath, Ultimate |
 
+**Maneuver Recommendation:** Most non-minion creatures have at least one maneuver ability for movement/positioning effects (shifts, pushes, repositioning). Based on official Draw Steel monsters: Solo (100%), Leader (93.8%), Elite (80.6%), Horde/Platoon (~70%), Minion (13% - optional).
+
 ### Ability Categories
 
 | Category | Usage | Limit |
@@ -300,6 +333,8 @@ Add `"charge"` to keywords, include `"effect.after"` with movement text.
 | `distance: "burst"`, `"cube"`, `"line"` | `cone` (NOT valid in Draw Steel) |
 | Valid role: `ambusher`, `artillery`, `brute`, `controller`, `defender`, `harrier`, `hexer`, `mount`, `support`, `solo` | Invalid role names |
 | Valid org: `minion`, `horde`, `platoon`, `elite`, `leader`, `solo` | Invalid organization |
+| Solo org + role: `"solo"` or `""` | Solo org + role: `"harrier"`, `"brute"`, etc. |
+| Leader org + role: `"leader"` or `""` | Leader org + role: other role names |
 | Valid monster keywords: `abyssal`, `accursed`, `animal`, `beast`, `construct`, `dragon`, `elemental`, `fey`, `giant`, `horror`, `humanoid`, `infernal`, `plant`, `soulless`, `swarm`, `undead` | Undefined keywords |
 | Valid ability keywords: `animal`, `animapathy`, `area`, `charge`, `chronopathy`, `cryokinesis`, `earth`, `fire`, `green`, `magic`, `melee`, `metamorphosis`, `psionic`, `pyrokinesis`, `ranged`, `resopathy`, `rot`, `performance`, `strike`, `telekinesis`, `telepathy`, `void`, `weapon` | Invalid ability keywords |
 | `spend` field in ALL abilities (even if empty) | Missing `spend` field |
@@ -360,7 +395,64 @@ Add `"charge"` to keywords, include `"effect.after"` with movement text.
 
 All `_id` fields must match `^[a-zA-Z0-9]{16}$` (exactly 16 alphanumeric chars).
 
-**CRITICAL:** Use the ID generator script instead of manual generation to avoid errors.
+**CRITICAL: All IDs must be UNIQUE within the same monster.** This includes:
+- The actor's `_id`
+- Each item/ability's `_id`
+- Each effect's `_id` inside `system.power.effects`
+
+**⚠️ NEVER reuse the same ID for multiple entities:**
+```json
+// WRONG - same ID used for actor, ability, AND effect:
+"_id": "Feu32e27L0EEvSda"           // Actor
+...
+{
+  "_id": "Feu32e27L0EEvSda",        // Ability - DUPLICATE!
+  "system": { "power": { "effects": {
+    "Feu32e27L0EEvSda": {           // Effect - TRIPLE DUPLICATE!
+      "_id": "Feu32e27L0EEvSda",
+      ...
+    }
+  }}}
+}
+```
+
+**✅ CORRECT - every ID is unique:**
+```json
+{
+  "_id": "I2HA61b5E3GHnHTH",        // Actor ID
+  "items": [
+    {
+      "_id": "XyPJJOU0fiU8VyHl",    // Ability 1 ID (unique)
+      "system": { "power": { "effects": {
+        "le5j4jZ6dJLk4UuE": {       // Effect ID (unique)
+          "_id": "le5j4jZ6dJLk4UuE",
+          ...
+        }
+      }}}
+    },
+    {
+      "_id": "PdL6EvIAV8xSMb3m"     // Ability 2 ID (unique)
+    }
+  ]
+}
+```
+
+**Workflow: Generate ALL IDs upfront, then assign them sequentially.**
+
+```bash
+# Calculate needed IDs:
+# 1 actor + 8 abilities + 10 effects = 19 IDs
+python scripts/generate_foundry_ids.py --count 19
+
+# Assign in order:
+# ID[0] = actor._id
+# ID[1] = items[0]._id
+# ID[2] = items[0].system.power.effects[effect_key]._id
+# ID[3] = items[1]._id
+# ...and so on
+```
+
+**Use the ID generator script to avoid errors:**
 
 ```bash
 # Generate 1 ID (for actor)
@@ -391,7 +483,7 @@ python scripts/generate_foundry_ids.py --count 5
 - Wrong length (15 or 17 characters instead of 16)
 - Including dashes (UUID format like `a1b2c3d4-e5f6-7890-abcd`)
 - Using placeholder text like "monster-uuid"
-- Generating duplicate IDs within the same monster
+- **Generating duplicate IDs within the same monster ← THIS CAUSES VALIDATION FAILURES**
 
 ## Power Roll Formula & Effects
 
@@ -638,15 +730,18 @@ Elite, Leader, and Solo monsters MUST have at least one ability with `resource: 
 - [ ] Actor `type` is `"npc"`
 - [ ] All `_id` were generated using `scripts/generate_foundry_ids.py`
 - [ ] All `_id` match `^[a-zA-Z0-9]{16}$` (16 chars)
-- [ ] No duplicate `_id` values within the same monster
+- [ ] No duplicate `_id` values within the same monster (actor, items, AND effects must all have unique IDs)
 - [ ] Exactly ONE ability has `category: "signature"`
 - [ ] Monster role is valid (`ambusher`, `artillery`, `brute`, `controller`, `defender`, `harrier`, `hexer`, `mount`, `support`, `solo`)
 - [ ] Monster organization is valid (`minion`, `horde`, `platoon`, `elite`, `leader`, `solo`)
+- [ ] Role and organization are compatible (Solo org → role="solo" or ""; Leader org → role="leader" or "")
 - [ ] Monster keywords are valid (lowercase from approved list)
 - [ ] Ability keywords are valid (lowercase from approved list)
 - [ ] Distance types are valid (`melee`, `ranged`, `burst`, `cube`, `line`, `self`, etc. - NOT `cone`)
 - [ ] For minion organization: "With Captain" effect present
 - [ ] For Elite/Leader/Solo: At least one ability with `resource: integer > 0`
+- [ ] For Solo/Leader: At least one maneuver ability (type: "maneuver")
+- [ ] For Elite/Horde/Platoon: Consider adding at least one maneuver (recommended but not required)
 - [ ] All abilities have `spend` field
 - [ ] `power.effects` contains structured objects (not empty) for signature/heroic/villain abilities
 - [ ] `formula: "@chr"` used (never characteristic names)

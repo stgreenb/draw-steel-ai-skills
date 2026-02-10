@@ -63,8 +63,21 @@ node_modules/
 # Generated output
 output/
 archive/
+webapp/
 
 # Environment
 .env
 .env.local
 .env.*.local
+
+# Development-only files
+openspec/
+docs/reference/
+tests/
+.flake8
+.pre-commit-config.yaml
+pyproject.toml
+CLAUDE.md
+IFLOW.md
+AGENTS.md
+.claude/commands/

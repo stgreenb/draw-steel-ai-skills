@@ -18,10 +18,17 @@ Stamina = ceil(((10 × Level) + Role_Stamina_Modifier) × Organization_Modifier)
 
 ### Damage (any tier)
 ```
-Damage = ceil((4 + Level + Role_Damage_Modifier) × Tier_Modifier)
+Damage = ceil((4 + Level + Damage_Modifier) × Tier_Multiplier)
 
 For Horde and Minion: Damage = ceil(Damage ÷ 2)
 ```
+
+**CRITICAL:** The Organization Modifier is NOT used for damage calculation! Damage modifiers come from:
+- **Role**: Ambusher/Artillery/Brute = +1, Controller/Defender/Harrier/Hexer/Mount/Support = +0
+- **Organization as Role**: Solo = +2, Leader = +1 (when used as role, see compatibility rules above)
+- **Elite**: +1 (can stack with role modifier for total +2)
+
+**Solo/Leader Bonus:** Solo and Leader monsters also get +1 to their highest characteristic and potency values (see Characteristics section).
 
 ### Free Strike
 ```
@@ -51,18 +58,25 @@ Extra_Stamina = ceil((3 × Level) + 3)
 
 ## Organization Modifiers
 
-| Organization | EV Modifier | Stamina Modifier | Damage Modifier | Notes |
-|--------------|-------------|------------------|-----------------|-------|
-| Minion | 0.5 | 0.5 | ÷2 | Squad-based Stamina |
-| Horde | 0.5 | 0.5 | ÷2 | Outnumber ~2:1 |
-| Platoon | 1.0 | 1.0 | 1.0 | Well-rounded |
-| Elite | 2.0 | 2.0 | 2.0 | Hardy, ~2 heroes |
-| Leader | 2.0 | 2.0 | 2.0 | Has villain actions |
-| Solo | 6.0 | 6.0 | 6.0 | Full encounter alone |
+**CRITICAL:** Organization modifiers apply ONLY to EV and Stamina, NOT to damage!
+
+| Organization | EV Modifier | Stamina Modifier | Notes |
+|--------------|-------------|------------------|-------|
+| Minion | 0.5 | 0.5 | Squad-based Stamina |
+| Horde | 0.5 | 0.5 | Outnumber ~2:1 |
+| Platoon | 1.0 | 1.0 | Well-rounded |
+| Elite | 2.0 | 2.0 | Hardy, ~2 heroes |
+| Leader | 2.0 | 2.0 | Has villain actions |
+| Solo | 6.0 | 6.0 | Full encounter alone |
 
 ---
 
 ## Role Modifiers
+
+> ⚠️ **CRITICAL: Solo Monsters Use BOTH Modifiers**
+> - Solo role modifier: **+30** (for stamina calculation)
+> - Solo organization modifier: **×6** (for EV and stamina calculation)
+> - Formula: `ceil(((10 × Level) + 30) × 6)` ← Note: +30 AND ×6, NOT just ×6!
 
 | Role | Stamina Modifier | Damage Modifier | Characteristic |
 |------|------------------|-----------------|----------------|
@@ -75,6 +89,8 @@ Extra_Stamina = ceil((3 × Level) + 3)
 | Hexer | +10 | +0 | Reason |
 | Mount | +20 | +0 | Might/Agility |
 | Support | +20 | +0 | Presence |
+| Solo | +30 | +2 | Varies |
+| Leader | +30 | +1 | Varies |
 
 ---
 
@@ -99,6 +115,30 @@ Extra_Stamina = ceil((3 × Level) + 3)
 
 ---
 
+## Role & Organization Compatibility
+
+**CRITICAL:** Solo and Leader organizations have special role restrictions.
+
+| Organization | Valid Role Values | Notes |
+|--------------|-------------------|-------|
+| **Solo** | `"solo"` or `""` (empty) | Never use other roles (brute, harrier, etc.) |
+| **Leader** | `"leader"` or `""` (empty) | Never use other roles (brute, harrier, etc.) |
+| **Elite** | Any standard role | Use appropriate role for the creature |
+| **Platoon** | Any standard role | Use appropriate role for the creature |
+| **Horde** | Any standard role | Use appropriate role for the creature |
+| **Minion** | Any standard role | Use appropriate role for the creature |
+
+**Examples:**
+- ✅ Correct: `organization: "solo"`, `role: "solo"` or `role: ""`
+- ❌ WRONG: `organization: "solo"`, `role: "harrier"` (invalid combination)
+- ❌ WRONG: `organization: "solo"`, `role: "brute"` (invalid combination)
+
+Based on analysis of 427 official Draw Steel monsters:
+- Solo monsters: 47.8% use `role="solo"`, 52.2% use `role=""`
+- Leader monsters: 34.4% use `role="leader"`, 65.6% use `role=""`
+
+---
+
 ## Example Calculations
 
 ### Level 3 Platoon Harrier
@@ -109,13 +149,21 @@ Extra_Stamina = ceil((3 × Level) + 3)
 - Damage T2: `ceil((4+3+0) × 1.1) = ceil(7.7) = 8`
 - Damage T3: `ceil((4+3+0) × 1.4) = ceil(9.8) = 10`
 
-### Level 5 Solo Brute
-- EV: `ceil(((2×5)+4) × 6.0) = ceil(14 × 6) = 84`
-- Stamina: `ceil(((10×5)+30) × 6.0) = ceil(80 × 6) = 480`
-- Free Strike: `ceil((4+5+1) × 0.6) = ceil(6.0) = 6`
-- Damage T1: `ceil((4+5+1) × 0.6 × 6) = ceil(36) = 36`
-- Damage T2: `ceil((4+5+1) × 1.1 × 6) = ceil(66) = 66`
-- Damage T3: `ceil((4+5+1) × 1.4 × 6) = ceil(84) = 84`
+### Level 5 Elite Brute
+- EV: `ceil(((2×5)+4) × 2.0) = ceil(14 × 2) = 28` ← Organization modifier for EV
+- Stamina: `ceil(((10×5)+30) × 2.0) = ceil(80 × 2) = 160` ← Organization modifier for Stamina
+- Free Strike: `ceil((4+5+2) × 0.6) = ceil(6.6) = 7` ← +2 damage (Brute +1, Elite +1)
+- Damage T1: `ceil((4+5+2) × 0.6) = ceil(6.6) = 7` ← NO organization multiplier!
+- Damage T2: `ceil((4+5+2) × 1.1) = ceil(12.1) = 13`
+- Damage T3: `ceil((4+5+2) × 1.4) = ceil(15.4) = 16`
+
+### Level 5 Solo (role="solo")
+- EV: `ceil(((2×5)+4) × 6.0) = ceil(14 × 6) = 84` ← Organization modifier for EV
+- Stamina: `ceil(((10×5)+30) × 6.0) = ceil(80 × 6) = 480` ← Organization modifier for Stamina
+- Free Strike: `ceil((4+5+2) × 0.6) = ceil(6.6) = 7` ← +2 damage (Solo role modifier)
+- Damage T1: `ceil((4+5+2) × 0.6) = ceil(6.6) = 7` ← NO organization multiplier!
+- Damage T2: `ceil((4+5+2) × 1.1) = ceil(12.1) = 13`
+- Damage T3: `ceil((4+5+2) × 1.4) = ceil(15.4) = 16`
 
 ### Level 1 Horde Controller
 - EV: `ceil(((2×1)+4) × 0.5) = ceil(6 × 0.5) = 3`
