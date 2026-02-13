@@ -365,6 +365,14 @@ Based on Bestiary analysis, most monsters have maneuvers, but **Minions NEVER ha
 | **Leader** (any level) | ✅ Yes | Must have a maneuver |
 | **Solo** (any level) | ✅ Yes | Must have a maneuver |
 
+### Minion-Specific Notes
+
+**Minions are unique:**
+- Stamina uses **×0.125** modifier (NOT ×0.5)
+- Only ONE signature ability (no maneuvers, no malice abilities)
+- "With Captain" shown in stat block table, NOT as separate trait
+- May have passive death traits (e.g., "explodes when killed")
+
 ### When to Omit a Maneuver
 
 **OK to skip maneuvers for:**
@@ -491,27 +499,43 @@ Solo creatures can take multiple turns per round:
 
 ### Minion "With Captain" Trait
 
-Minions gain bonuses when led by a captain:
+**CRITICAL:** Minions MUST have a "With Captain" trait shown in the stat block table, NOT as a separate ability!
+
+Minions gain bonuses when led by a captain. This is shown in the table, not as a separate trait.
 
 | Bonus Type | Example |
 |------------|---------|
-| Damage | +1 damage |
-| Speed | +2 speed |
-| Stamina | +5 extra Stamina per minion |
-| Accuracy | Edge on attacks |
+| Damage | `+2 damage bonus to strikes` |
+| Speed | `+2 bonus to speed` |
+| Accuracy | `Gain an edge on strikes` |
+| Range | `+5 bonus to ranged distance` |
+| Melee Range | `+2 bonus to melee distance` |
 
-**Template - In stat block table:**
-```
-| **+1 bonus to damage**<br/> With Captain | **-**<br/> Weaknesses |
+**Correct format - In stat block table:**
+```markdown
+| **+2 bonus to speed**<br/> With Captain | **-**<br/> Weaknesses |
 ```
 
-**Or as a standalone trait:**
+**WRONG - As a separate trait (DO NOT DO THIS):**
 ```markdown
 <!-- -->
 > ⭐️ **With Captain**
 >
-> **Effect:** While a captain is present, this minion gains +1 bonus to damage.
+> **Effect:** While a captain is present, this minion gains +2 speed.
 ```
+
+### Minion Ability Structure
+
+Minions have a simplified structure:
+1. **Signature ability only** (one main action)
+2. **With Captain** in the stat block table
+3. **Optional passive trait** (death effects, special abilities)
+
+**Minions do NOT have:**
+- Maneuver abilities (type: "maneuver")
+- Malice-cost abilities (resource > 0)
+- Multiple main action abilities
+- Villain actions
 
 ### Malice Features
 

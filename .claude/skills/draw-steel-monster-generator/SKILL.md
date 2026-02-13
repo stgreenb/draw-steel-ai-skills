@@ -82,9 +82,10 @@ Generate Draw Steel TTRPG monsters that strictly conform to official MCDM stat b
 
 **Calculate using Draw Steel math:**
 - **Stamina:** `ceil(((10 × Level) + Role_Stamina_Modifier) × Organization_Modifier)`
-  - ⚠️ **Solo monsters:** Role Modifier **+30**, Org Modifier **×6** → L1 Solo: `ceil((10+30)×6) = 240`
-  - ⚠️ **Leader monsters:** Role Modifier **+0**, Org Modifier **×2** → L2 Leader: `ceil((20+0)×2) = 40`
-  - ⚠️ **Elite/Platoon/Horde/Minion:** See table below
+  - ⚠️ **Solo monsters:** Role Modifier **+30**, EV Modifier **×6**, Stamina Modifier **×5** → L1 Solo: `ceil((10+30)×5) = 200`
+  - ⚠️ **Leader monsters:** Role Modifier **+30**, Org Modifier **×2** → L2 Leader: `ceil((20+30)×2) = 100`
+  - ⚠️ **Minions:** Role Modifier varies, **Stamina Org Modifier ×0.125** (NOT ×0.5!) → L1 Minion Brute: `ceil((10+30)×0.125) = 5`
+  - ⚠️ **Elite/Platoon/Horde:** See table below
 - **EV:** `ceil(((2 × Level) + 4) × Organization_Modifier)`
 - **Damage:** `ceil((4 + Level + Role_Damage_Modifier) × Tier_Modifier)` ← **NO organization modifier!**
 - **Characteristics:** Based on echelon (Levels 1-2=+1, 3-4=+2, 5-6=+3, 7-8=+4, 9-10=+5)
@@ -92,22 +93,22 @@ Generate Draw Steel TTRPG monsters that strictly conform to official MCDM stat b
 
 ### Modifiers Quick Reference
 
-| Organization | Org Modifier | Role (if not Solo/Leader) | Role Modifier | Damage Modifier |
-|--------------|--------------|---------------------------|---------------|-----------------|
-| Solo | ×6 | `"solo"` or `""` | +30 | +2 |
-| Leader | ×2 | `"leader"` or `""` | +30 | +1 |
-| Elite | ×2 | Any role | See below | +1 (stacks with role) |
-| Platoon | ×1 | Any role | See below | +0 or +1 |
-| Horde | ×0.5 | Any role | See below | +0 or +1 |
-| Minion | ×0.5 | Any role | See below | +0 or +1 |
+| Organization | EV Modifier | Stamina Modifier | Role (if not Solo/Leader) | Role Modifier | Damage Modifier |
+|--------------|-------------|------------------|---------------------------|---------------|-----------------|
+| Solo | ×6 | **×5** | `"solo"` or `""` | +30 | +2 |
+| Leader | ×2 | ×2 | `"leader"` or `""` | +30 | +1 |
+| Elite | ×2 | ×2 | Any role | See below | +1 (stacks with role) |
+| Platoon | ×1 | ×1 | Any role | See below | +0 or +1 |
+| Horde | ×0.5 | ×0.5 | Any role | See below | +0 or +1 |
+| Minion | ×0.5 | **×0.125** | Any role | See below | +0 or +1 |
 
 **Stamina Formula Examples:**
-- L1 Solo: `ceil((10+30)×6) = 240`
+- L1 Solo: `ceil((10+30)×5) = 200` ← **×5 for stamina, ×6 for EV!**
 - L2 Leader: `ceil((20+30)×2) = 100`
 - L5 Elite Brute: `ceil((50+30)×2) = 160`
 - L3 Platoon Harrier: `ceil((30+20)×1) = 50`
 - L1 Horde Controller: `ceil((10+10)×0.5) = 10`
-- L2 Minion Brute: `ceil((20+30)×0.5) = 25`
+- L1 Minion Brute: `ceil((10+30)×0.125) = 5` ← **×0.125 for Minion stamina!**
 
 **CRITICAL - Damage Calculation:** The Organization Modifier (×6 for Solo, ×2 for Elite/Leader) is used ONLY for EV and Stamina, NOT for damage! Solo monsters get their damage boost from the Solo damage modifier (+2), not from multiplying by 6.
 
@@ -725,6 +726,88 @@ Elite, Leader, and Solo monsters MUST have at least one ability with `resource: 
 
 **CRITICAL:** Condition durations are applied by monster abilities, NOT part of the condition name itself.
 
+## Minion-Specific Rules
+
+Minions have unique characteristics that differ from other organizations:
+
+### Stamina Formula (CRITICAL)
+
+Minions use **×0.125** for stamina, NOT ×0.5:
+```
+Minion Stamina = ceil(((10 × Level) + Role_Modifier) × 0.125)
+```
+
+| Level | Brute | Harrier | Ambusher | Artillery |
+|-------|-------|---------|----------|-----------|
+| 1 | 5 | 4 | 4 | 3 |
+| 4 | 9 | 8 | 8 | 7 |
+| 7 | 13 | 12 | 12 | 10 |
+| 10 | 17 | 16 | 16 | 14 |
+
+### With Captain Trait (Required)
+
+Minions MUST have a "With Captain" trait, shown in the stat block table, NOT as a separate ability:
+
+**Correct format (in stat block table):**
+```markdown
+| **+2 bonus to speed**<br/> With Captain | **-**<br/> Weaknesses |
+```
+
+**Common With Captain bonuses:**
+- `+2 bonus to speed`
+- `+2 damage bonus to strikes`
+- `Gain an edge on strikes`
+- `+2 bonus to melee distance`
+- `+5 bonus to ranged distance`
+
+### Minion Ability Structure
+
+Minions have a simplified ability structure:
+1. **One signature ability** (main action)
+2. **With Captain trait** (in table, not as ability)
+3. **Optional passive trait** (e.g., death effect, special ability)
+
+**Minions do NOT have:**
+- Maneuver abilities
+- Malice-cost abilities
+- Villain actions
+
+### Minion Death Traits (Optional but Common)
+
+Many minions have a triggered effect when they die:
+
+```markdown
+> ⭐️ **Death Grasp**
+>
+> When the minion is reduced to 0 Stamina, their space becomes difficult terrain.
+```
+
+```markdown
+> ⭐️ **Brittle Revenge**
+>
+> The minion explodes when reduced to 0 Stamina, dealing 2 damage to each adjacent creature.
+```
+
+### Potency Notation in Markdown
+
+When writing minion (and all monster) abilities in markdown, use the `<` notation for potency:
+
+**Correct:**
+```
+- **≤11:** 2 damage; A < 0 prone
+- **12-16:** 4 damage; A < 1 prone
+- **17+:** 5 damage; A < 2 prone
+```
+
+**Incorrect:**
+```
+- **Tier 1:** 2 damage; P-2 prone
+- **Tier 2:** 4 damage; P-1 prone
+- **Tier 3:** 5 damage; P prone
+```
+
+The `<` notation indicates: "If [Characteristic] is less than [value], apply condition."
+
 ## Self-Validation Checklist (Before Output)
 
 - [ ] Actor `type` is `"npc"`
@@ -738,7 +821,9 @@ Elite, Leader, and Solo monsters MUST have at least one ability with `resource: 
 - [ ] Monster keywords are valid (lowercase from approved list)
 - [ ] Ability keywords are valid (lowercase from approved list)
 - [ ] Distance types are valid (`melee`, `ranged`, `burst`, `cube`, `line`, `self`, etc. - NOT `cone`)
-- [ ] For minion organization: "With Captain" effect present
+- [ ] **For minions:** Stamina uses ×0.125 modifier (NOT ×0.5!)
+- [ ] **For minions:** "With Captain" trait in stat block table
+- [ ] **For minions:** Only ONE signature ability (no maneuvers, no malice abilities)
 - [ ] For Elite/Leader/Solo: At least one ability with `resource: integer > 0`
 - [ ] For Solo/Leader: At least one maneuver ability (type: "maneuver")
 - [ ] For Elite/Horde/Platoon: Consider adding at least one maneuver (recommended but not required)

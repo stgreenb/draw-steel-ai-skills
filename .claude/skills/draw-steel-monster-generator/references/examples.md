@@ -16,6 +16,19 @@ For creatures with **Reason +2**:
 
 ## Example 1: Gremlin (Level 3, Minion, Harrier)
 
+### Calculations
+- **Level:** 3 (Echelon 1)
+- **Organization:** Minion (×0.5 for EV, ×0.125 for stamina!)
+- **Role:** Harrier (+20 stamina modifier, +0 damage modifier)
+- **EV:** `ceil(((2×3)+4) × 0.5) = ceil(10 × 0.5) = 5` (for four minions)
+- **Stamina:** `ceil(((10×3)+20) × 0.125) = ceil(50 × 0.125) = 6` ← **×0.125 for Minion stamina!**
+- **Damage:** Base = 4+3+0 = 7, divided by 2 for Minion
+  - T1: `ceil(7 × 0.6) ÷ 2 = 2`
+  - T2: `ceil(7 × 1.1) ÷ 2 = 4`
+  - T3: `ceil(7 × 1.4) ÷ 2 = 5`
+- **Free Strike:** 2 (equals T1 damage)
+- **Characteristics:** Agility +2 (Harrier primary)
+
 ### Stat Block
 ```markdown
 ---
@@ -38,7 +51,7 @@ size: 1M
 source: mcdm.monsters.v1
 speed: 6
 stability: 0
-stamina: '25'
+stamina: '6'
 type: monster
 ---
 
@@ -46,55 +59,43 @@ type: monster
 
 |         Fey, Humanoid          |          -          |      Level 3       |          Minion Harrier           |           EV 5            |
 | :----------------------------: | :-----------------: | :----------------: | :-------------------------------: | :-----------------------: |
-|        **1M**<br/> Size        |  **6**<br/> Speed   | **25**<br/> Stamina |         **0**<br/> Stability       |   **2**<br/> Free Strike  |
-|       **-**<br/> Immunity      |   **-**<br/> Movement |          -         | **+1 bonus to speed**<br/> With Captain |        **-**<br/> Weaknesses |
+|        **1M**<br/> Size        |  **6**<br/> Speed   | **6**<br/> Stamina |         **0**<br/> Stability       |   **2**<br/> Free Strike  |
+|       **-**<br/> Immunity      |   **-**<br/> Movement |          -         | **+2 bonus to speed**<br/> With Captain |        **-**<br/> Weaknesses |
 |     **0**<br/> Might          |   **+2**<br/> Agility | **-1**<br/> Reason |        **0**<br/> Intuition        |   **-1**<br/> Presence    |
 
 <!-- -->
 > ⚔️ **Nimble Strike**
 >
-> | **Melee, Strike, Weapon** |     **Main action** |
-> | ------------------------- | ------------------: |
-> | **📏 Melee 1**            | **🎯 One creature** |
+> | **Melee, Strike, Weapon** |                          **Main action** |
+> | ------------------------- | ---------------------------------------: |
+> | **📏 Melee 1**            | **🎯 One creature or object per minion** |
 >
-> **Power Roll + Agility:**
+> **Power Roll + 2:**
 >
-> - **≤11:** 2 piercing; A < 0, push 1
-> - **12-16:** 4 piercing; A < 1, push 2
-> - **17+:** 5 piercing; A < 2, push 2 + weakened (save ends)
->
-> **Effect:** Until the start of the gremlin's next turn, the target can't make opportunity attacks against any gremlin.
-
-<!-- -->
-> ⭐️ **Skitter Away**
->
-> | **-** |     **Free triggered action** |
-> | ----- | ---------------------------: |
-> | **📏 -** | **🎯 The gremlin** |
->
-> **Trigger:** The gremlin takes damage.
->
-> **Effect:** The gremlin shifts 2 squares.
+> - **≤11:** 2 damage
+> - **12-16:** 4 damage
+> - **17+:** 5 damage; the gremlin shifts 1 square
 ```
 
 ### Validation Checklist
 - [x] EV: 5 = ceil(((2×3)+4) × 0.5) ✓
-- [x] Stamina: 25 = ceil(((10×3)+20) × 0.5) ✓
-- [x] Free Strike: 2 = ceil((4+3+0) × 0.6) ÷ 2 ✓
-- [x] Damage T1: 2 = ceil((4+3+0) × 0.6) ÷ 2 ✓
-- [x] Damage T2: 4 = ceil((4+3+0) × 1.1) ÷ 2 ✓
-- [x] Damage T3: 5 = ceil((4+3+0) × 1.4) ÷ 2 ✓
-- [x] Potency: A < 0, A < 1, A < 2 (Agility 2 → Weak 0, Avg 1, Strong 2) ✓
+- [x] Stamina: 6 = ceil(((10×3)+20) × 0.125) ✓ ← **×0.125 for Minion!**
+- [x] Free Strike: 2 = ceil(ceil(7 × 0.6) ÷ 2) ✓
+- [x] Damage T1: 2 = ceil(ceil(7 × 0.6) ÷ 2) ✓
+- [x] Damage T2: 4 = ceil(ceil(7 × 1.1) ÷ 2) ✓
+- [x] Damage T3: 5 = ceil(ceil(7 × 1.4) ÷ 2) ✓
+- [x] Potency: Not used in this simple ability
 - [x] Size: 1M (Minion) ✓
 - [x] Speed: 6 (Harrier) ✓
 - [x] Characteristics: Agility +2 (Harrier), others 0 to -1 ✓
 - [x] Ancestry: Fey, Humanoid ✓
+- [x] With Captain: +2 bonus to speed ✓
 
 ### Generation Notes
 - **Why Minion Harrier?** Gremlins are quick, mischievous fey that use hit-and-run tactics
-- **Potency values:** Agility +2 → Weak=0, Avg=1, Strong=2
-- **Signature ability:** Fast attack with push effects (Harrier specialty)
-- **Secondary ability:** Repositioning on taking damage (classic gremlin behavior)
+- **Stamina:** Uses ×0.125 modifier (NOT ×0.5) → 6 stamina, not 25!
+- **Signature ability:** Fast attack with movement on tier 3
+- **With Captain:** Shown in stat block table, not as separate ability
 
 ---
 
@@ -278,9 +279,9 @@ type: monster
 ### Calculations
 - **Level:** 5 (Echelon 2)
 - **Highest Characteristic:** +3 (1 + echelon) +1 (Solo bonus) = **+4**
-- **Organization:** Solo (×6 for EV/Stamina, +2 damage modifier, 2 targets)
+- **Organization:** Solo (×6 for EV, ×5 for Stamina, +2 damage modifier, 2 targets)
 - **EV:** `ceil(((2×5)+4) × 6.0) = ceil(14 × 6) = 84`
-- **Stamina:** `ceil(((10×5)+30) × 6.0) = ceil(80 × 6) = 480`
+- **Stamina:** `ceil(((10×5)+30) × 5.0) = ceil(80 × 5) = 400`
 - **Damage T1:** `ceil((4+5+2) × 0.6) = ceil(6.6) = 7` (Solo +2 damage, NO org multiplier!)
 - **Damage T2:** `ceil((4+5+2) × 1.1) = ceil(12.1) = 13`
 - **Damage T3:** `ceil((4+5+2) × 1.4) = ceil(15.4) = 16`
@@ -310,7 +311,7 @@ size: 2L
 source: mcdm.monsters.v1
 speed: 6
 stability: 0
-stamina: '480'
+stamina: '400'
 type: monster
 ---
 
@@ -318,7 +319,7 @@ type: monster
 
 |            Giant, Humanoid             |          -          |      Level 5       |            Solo Brute             |           EV 84            |
 | :-----------------------------------: | :-----------------: | :----------------: | :-------------------------------: | :------------------------: |
-|           **2L**<br/> Size            |  **6**<br/> Speed   | **480**<br/> Stamina |         **0**<br/> Stability       |   **64**<br/> Free Strike  |
+|           **2L**<br/> Size            |  **6**<br/> Speed   | **400**<br/> Stamina |         **0**<br/> Stability       |   **64**<br/> Free Strike  |
 |           **-**<br/> Immunity         |   **-**<br/> Movement |          -         | **-**<br/> With Captain           |        **-**<br/> Weaknesses |
 |          **+4**<br/> Might           |   **0**<br/> Agility  | **-1**<br/> Reason  |        **0**<br/> Intuition        |   **0**<br/> Presence      |
 
@@ -537,9 +538,15 @@ type: monster
 
 | Condition Type | Format | How It Ends |
 |---------------|--------|-------------|
-| **Persistent** | `[condition] (save ends)` | Target makes a save at end of each turn |
+| **Save ends** | `[condition] (save ends)` | Target makes a save at end of each turn |
 | **Conditional** | `[condition]` | Specific action ends it (stand up, escape, etc.) |
-| **Ongoing** | `[condition]` | Triggers on action use, ends when healed |
+| **Time-limited** | `[condition] until the end of your next turn` | Ends automatically at end of your next turn |
+| **Encounter-long** | `[condition] until the end of the encounter` | Ends when encounter ends or when you die |
+
+**NEVER Use "until healed":**
+- NOT used in published Draw Steel content
+- Conditions end by save, by specific action, or by time
+- Healing removes damage, not conditions (conditions have their own mechanics)
 
 ### Tier-Based Condition Patterns
 

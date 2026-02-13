@@ -60,14 +60,35 @@ Extra_Stamina = ceil((3 × Level) + 3)
 
 **CRITICAL:** Organization modifiers apply ONLY to EV and Stamina, NOT to damage!
 
+**IMPORTANT:** Minions use a DIFFERENT stamina modifier than other organizations!
+
 | Organization | EV Modifier | Stamina Modifier | Notes |
 |--------------|-------------|------------------|-------|
-| Minion | 0.5 | 0.5 | Squad-based Stamina |
+| Minion | 0.5 | **0.125** | Squad-based Stamina (very low!) |
 | Horde | 0.5 | 0.5 | Outnumber ~2:1 |
 | Platoon | 1.0 | 1.0 | Well-rounded |
 | Elite | 2.0 | 2.0 | Hardy, ~2 heroes |
 | Leader | 2.0 | 2.0 | Has villain actions |
-| Solo | 6.0 | 6.0 | Full encounter alone |
+| Solo | 6.0 | **5.0** | Full encounter alone (different modifiers!) |
+
+### Minion Stamina Formula (CRITICAL)
+
+**Minions use ×0.125 for stamina, NOT ×0.5!**
+
+```
+Minion Stamina = ceil(((10 × Level) + Role_Modifier) × 0.125)
+```
+
+**Verification against official monsters:**
+
+| Level | Role | Formula | Result | Official |
+|-------|------|---------|--------|----------|
+| 1 | Brute | ceil((10+30) × 0.125) | 5 | 5 ✓ |
+| 1 | Harrier | ceil((10+20) × 0.125) | 4 | 4 ✓ |
+| 1 | Artillery | ceil((10+10) × 0.125) | 3 | 3 ✓ |
+| 4 | Brute | ceil((40+30) × 0.125) | 9 | 9 ✓ |
+| 7 | Brute | ceil((70+30) × 0.125) | 13 | 13 ✓ |
+| 10 | Brute | ceil((100+30) × 0.125) | 17 | 17 ✓ |
 
 ---
 
@@ -75,8 +96,10 @@ Extra_Stamina = ceil((3 × Level) + 3)
 
 > ⚠️ **CRITICAL: Solo Monsters Use BOTH Modifiers**
 > - Solo role modifier: **+30** (for stamina calculation)
-> - Solo organization modifier: **×6** (for EV and stamina calculation)
-> - Formula: `ceil(((10 × Level) + 30) × 6)` ← Note: +30 AND ×6, NOT just ×6!
+> - Solo EV modifier: **×6** (for EV calculation only)
+> - Solo stamina modifier: **×5** (for stamina calculation only)
+> - EV Formula: `ceil(((2 × Level) + 4) × 6)`
+> - Stamina Formula: `ceil(((10 × Level) + 30) × 5)`
 
 | Role | Stamina Modifier | Damage Modifier | Characteristic |
 |------|------------------|-----------------|----------------|
@@ -158,8 +181,8 @@ Based on analysis of 427 official Draw Steel monsters:
 - Damage T3: `ceil((4+5+2) × 1.4) = ceil(15.4) = 16`
 
 ### Level 5 Solo (role="solo")
-- EV: `ceil(((2×5)+4) × 6.0) = ceil(14 × 6) = 84` ← Organization modifier for EV
-- Stamina: `ceil(((10×5)+30) × 6.0) = ceil(80 × 6) = 480` ← Organization modifier for Stamina
+- EV: `ceil(((2×5)+4) × 6.0) = ceil(14 × 6) = 84` ← ×6 for EV
+- Stamina: `ceil(((10×5)+30) × 5.0) = ceil(80 × 5) = 400` ← ×5 for Stamina (different!)
 - Free Strike: `ceil((4+5+2) × 0.6) = ceil(6.6) = 7` ← +2 damage (Solo role modifier)
 - Damage T1: `ceil((4+5+2) × 0.6) = ceil(6.6) = 7` ← NO organization multiplier!
 - Damage T2: `ceil((4+5+2) × 1.1) = ceil(12.1) = 13`
@@ -172,6 +195,14 @@ Based on analysis of 427 official Draw Steel monsters:
 - Damage T1: `ceil((4+1+0) × 0.6) ÷ 2 = 2`
 - Damage T2: `ceil((4+1+0) × 1.1) ÷ 2 = ceil(5.5) ÷ 2 = 3`
 - Damage T3: `ceil((4+1+0) × 1.4) ÷ 2 = ceil(7.0) ÷ 2 = 4`
+
+### Level 1 Minion Brute (CRITICAL - Different Stamina Formula!)
+- EV: `ceil(((2×1)+4) × 0.5) = ceil(6 × 0.5) = 3` (for four minions)
+- Stamina: `ceil(((10×1)+30) × 0.125) = ceil(40 × 0.125) = 5` ← **×0.125, NOT ×0.5!**
+- Free Strike: `ceil((4+1+1) × 0.6) ÷ 2 = ceil(3.6) ÷ 2 = 2`
+- Damage T1: `ceil((4+1+1) × 0.6) ÷ 2 = 2`
+- Damage T2: `ceil((4+1+1) × 1.1) ÷ 2 = ceil(6.6) ÷ 2 = 3`
+- Damage T3: `ceil((4+1+1) × 1.4) ÷ 2 = ceil(8.4) ÷ 2 = 4`
 
 ---
 
