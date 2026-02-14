@@ -1957,7 +1957,7 @@ Benefits (choose one):
 Run before outputting with `--format foundry` or `--format both`:
 
 ```bash
-python tests/test_reward_validation.py output/filename.json
+python .claude/skills/draw-steel-reward-generator/scripts/validate_reward.py output/filename.json
 ```
 
 **Output interpretation:**

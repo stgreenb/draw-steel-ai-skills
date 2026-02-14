@@ -895,6 +895,21 @@ Before outputting a DTO, verify:
 - [ ] Allied Awareness grants automatic benefits (not test-based abilities)
 - [ ] Upgrade EV costs reasonable (+1 simple, +2 moderate, +3-4 major)
 
+## Validation Script
+
+Run validation on generated DTOs:
+
+```bash
+python .claude/skills/draw-steel-dto-generator/scripts/validate_dto.py output/filename.md
+```
+
+**Output interpretation:**
+- **PASSED (✓):** All checks successful
+- **ERRORS (❌):** Critical issues - fix before using
+- **WARNINGS (⚠️):** Minor issues - review but acceptable
+
+This is MANDATORY when generating DTOs - never skip validation.
+
 ## Cross-System Conversion
 
 When converting traps/hazards from other systems:
