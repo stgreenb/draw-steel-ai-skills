@@ -112,6 +112,30 @@ Generate Draw Steel TTRPG monsters that strictly conform to official MCDM stat b
 
 **CRITICAL - Damage Calculation:** The Organization Modifier (×6 for Solo, ×2 for Elite/Leader) is used ONLY for EV and Stamina, NOT for damage! Solo monsters get their damage boost from the Solo damage modifier (+2), not from multiplying by 6.
 
+## Free Strike Calculation
+
+**Official Rule:** "A monster's free strike damage is equal to the damage calculated for a tier 1 outcome for an ability."
+
+Free strike represents the damage dealt by basic unrolled attacks - when a monster makes a simple attack without using a named ability.
+
+**Formula:**
+```
+Free Strike = Tier 1 Damage Value from Signature Ability
+```
+
+**Examples:**
+- L5 Solo Brute signature deals 8/14/18 damage → Free Strike = **8**
+- L3 Horde Harrier signature deals 4/7/9 damage → Free Strike = **4**
+- L7 Leader Hexer signature deals 7/12/16 damage → Free Strike = **7**
+
+**In Foundry JSON:**
+```json
+"monster": {
+  "freeStrike": 8,
+  ...
+}
+```
+
 **Never copy:**
 - HP, damage, attack bonuses from source systems
 - Ability mechanics directly
@@ -161,11 +185,11 @@ The monster stat block is provided below. For detailed error information includi
   "system": {
     "stamina": { "value": 50, "max": 50, "temporary": 0 },
     "characteristics": {
-      "might": { "value": 2 },
-      "agility": { "value": 1 },
-      "reason": { "value": -1 },
-      "intuition": { "value": 1 },
-      "presence": { "value": -1 }
+      "might": { "value": 2, "banes": 0, "edges": 0 },
+      "agility": { "value": 1, "banes": 0, "edges": 0 },
+      "reason": { "value": -1, "banes": 0, "edges": 0 },
+      "intuition": { "value": 1, "banes": 0, "edges": 0 },
+      "presence": { "value": -1, "banes": 0, "edges": 0 }
     },
     "combat": {
       "save": { "threshold": 6, "bonus": "" },
@@ -183,6 +207,7 @@ The monster stat block is provided below. For detailed error information includi
       "immunities": { "all": 0, "poison": 0, "acid": 0, "cold": 0, "corruption": 0, "fire": 0, "holy": 0, "lightning": 0, "psychic": 0, "sonic": 0 },
       "weaknesses": { "all": 0 }
     },
+    "statuses": { "canFlank": true },
     "biography": { "value": "", "director": "", "languages": [] },
     "source": { "book": "Monsters", "page": "", "license": "Draw Steel Creator License" },
     "negotiation": { "interest": 5, "patience": 5, "motivations": [], "pitfalls": [], "impression": 1 },
@@ -245,7 +270,7 @@ The monster stat block is provided below. For detailed error information includi
       "ownership": { "default": 0 }
     }
   ],
-  "_stats": { "systemId": "draw-steel", "systemVersion": "0.9.0" },
+  "_stats": { "systemId": "draw-steel", "systemVersion": "0.10.0" },
   "_id": "sJhjuVdliz3ThjEa"
 }
 ```
@@ -261,6 +286,37 @@ The monster stat block is provided below. For detailed error information includi
 | **villain** | Solo/Leader only - 3 per monster, once per encounter, NO malice cost | Breath, Ultimate |
 
 **Maneuver Recommendation:** Most non-minion creatures have at least one maneuver ability for movement/positioning effects (shifts, pushes, repositioning). Based on official Draw Steel monsters: Solo (100%), Leader (93.8%), Elite (80.6%), Horde/Platoon (~70%), Minion (13% - optional).
+
+### Feature Items (Passive Traits)
+
+Use `type: "feature"` for passive abilities that are always active (not actions the monster takes):
+
+```json
+{
+  "name": "Lord's Bloodthirst",
+  "type": "feature",
+  "img": "icons/creatures/unholy/demon-hairy-winged-pink.webp",
+  "system": {
+    "description": {
+      "value": "<p>The vampire lord regains 5 Stamina at the start of each of their turns while they have a grabbed creature.</p>",
+      "director": ""
+    },
+    "source": { "book": "Monsters", "license": "Draw Steel Creator License", "page": "269" },
+    "_dsid": "lords-bloodthirst",
+    "advancements": {}
+  },
+  "_id": "gH7iJ8kL9mN0oP1q"
+}
+```
+
+**Feature Structure:**
+- `type: "feature"` (NOT "ability")
+- `system.description.value` - HTML description of the passive effect
+- `system._dsid` - Kebab-case identifier
+- `system.source` - Book reference
+- NO `power`, `distance`, `target`, `keywords`, or `resource` fields needed
+
+**Common Feature Names:** "Lord's Bloodthirst", "Undead Resilience", "Agonizing Phasing", "Exhale", "With Captain"
 
 ### Ability Categories
 
@@ -377,7 +433,22 @@ Add `"charge"` to keywords, include `"effect.after"` with movement text.
 ## Characteristics & Potencies (Quick Reference)
 
 **Characteristics:** Range -5 to +5 representing natural abilities.
-- **Echelon modifiers:** Levels 1-2=+1, 3-4=+2, 5-6=+3, 7-8=+4, 9-10=+5
+
+**Official Rule:** "A monster's highest characteristic and power roll bonus is equal to 1 + their echelon."
+
+| Echelon | Levels | Highest Characteristic |
+|---------|--------|------------------------|
+| 1st | 1-2 | +1 |
+| 2nd | 3-4 | +2 |
+| 3rd | 5-6 | +3 |
+| 4th | 7-8 | +4 |
+| 5th | 9-10 | +5 |
+
+**Important Clarifications:**
+- The echelon value is a **GUIDELINE** for the highest characteristic, NOT a hard cap or point budget
+- Official monsters sometimes exceed this guideline for thematic reasons
+- The guideline applies to the **highest** characteristic only - other characteristics are set based on monster concept
+- Leader/Solo: Add +1 to highest characteristic (max +5), and +1 to all potency values (max 6)
 
 **Potencies:** Effect strength based on target's characteristic.
 
@@ -391,6 +462,36 @@ Add `"charge"` to keywords, include `"effect.after"` with movement text.
 - Tier 1: Potency = 1 (fails if Agility < 1)
 - Tier 2: Potency = 2 (fails if Agility < 2)
 - Tier 3: Potency = 3 (fails if Agility < 3)
+
+**Markdown to JSON Potency Mapping:**
+
+| Markdown | JSON Potency | JSON Characteristic |
+|----------|--------------|---------------------|
+| `M < 3` | `@potency.weak` | `"might"` |
+| `A < 2` | `@potency.average` | `"agility"` |
+| `P < 4` | `@potency.strong` | `"presence"` |
+
+Characteristic abbreviations: M=Might, A=Agility, R=Reason, I=Intuition, P=Presence
+
+**Example conversion:**
+- Markdown: `M < 3 slowed (save ends)` at tier 1
+- JSON: `"potency": { "value": "@potency.weak", "characteristic": "might" }`
+
+## Compendium UUID References
+
+Use `@UUID[...]` format to link to other monsters or features in Foundry VTT:
+
+**Linking to another monster:**
+```
+@UUID[Compendium.draw-steel.monsters.Actor.pNA8H0vk4EDNq4UI]{Blood-Starved Vampire}
+```
+
+**Linking to a monster feature:**
+```
+@UUID[Compendium.draw-steel.monster-features.Item.EzWvhVW1uXUmKhV5]{Dread March}
+```
+
+These create clickable links in Foundry VTT that open the referenced entity.
 
 ## _ID Format (Critical)
 
@@ -599,6 +700,8 @@ Damage and conditions MUST be structured in `system.power.effects`, NOT as HTML 
 | 1 | S/M | Minion, Horde, Platoon, Elite, Leader |
 | 3-5 | L | Solo monsters |
 
+**Solo Turns Field:** `turns: 2` gives Solo monsters two initiative slots, meaning they act twice per round at different initiative counts. This makes them significantly more threatening by allowing them to respond to player actions more frequently.
+
 ## Distance Type Values
 
 | Ability Range | Configuration |
@@ -686,6 +789,50 @@ Elite, Leader, and Solo monsters MUST have at least one ability with `resource: 
 - **Cost 7**: Map-wide changes, permanent buffs, multi-part effects
 - **Cost 10**: Ultimate abilities, multiple areas, encounter-altering effects
 
+### Summoning Abilities
+
+**Official examples show summoned creatures are typically MINIONS:**
+
+| Monster | Summons | Type | Cost | Ability Type |
+|---------|---------|------|------|--------------|
+| Goblin Monarch | 2 Goblin Runners | L1 Minion | 1 | maneuver |
+| Vampire Lord | 2 Blood-Starved Vampires | L7 Minion | 2 | maneuver |
+| Gnoll Carnage | 4 Abyssal Hyenas | L2 Minion | 0 (villain) | villain |
+| Orc Warleader | 4 Orc Blitzers | L1 Minion | 0 (villain) | villain |
+
+**Summoning via maneuver:** Cost 1-2 malice based on creature count/power
+**Summoning via villain action:** No malice cost (resource: null)
+
+## Prior Malice Features Pattern
+
+Monsters with specific keywords (undead, dragon, abyssal, etc.) can access shared malice features from the compendium. Official undead monsters level 3+ include a "Prior Malice Features" ability:
+
+```json
+{
+  "name": "Prior Malice Features",
+  "type": "ability",
+  "system": {
+    "type": "none",
+    "category": "heroic",
+    "resource": null,
+    "keywords": [],
+    "distance": { "type": "special" },
+    "target": { "type": "special" },
+    "power": { "roll": { "formula": "@chr", "characteristics": [] }, "effects": {} },
+    "effect": {
+      "before": "<p>The undead activates a Malice feature available to undead of level 3 or lower.</p><p>@UUID[Compendium.draw-steel.monster-features.Item.EzWvhVW1uXUmKhV5]{Dread March}</p><p>@UUID[Compendium.draw-steel.monster-features.Item.da4wUZrJsfQ3EMZ3]{Paranormal Fling}</p>",
+      "after": ""
+    }
+  }
+}
+```
+
+**Structure:**
+- `type: "none"` and `category: "heroic"`
+- `resource: null` (activates features, doesn't cost malice)
+- Compendium links in `effect.before` using `@UUID[...]{Name}` format
+- Lists features available at lower levels for the monster type
+
 ## Damage Immunities & Weaknesses
 
 ```json
@@ -705,6 +852,44 @@ Elite, Leader, and Solo monsters MUST have at least one ability with `resource: 
   "weaknesses": { "all": 0, "cold": 5, "fire": 3 }
 }
 ```
+
+### Numeric Values Explained
+
+**Official Rule:** "Damage immunity often has a value associated with it... Whenever a target with damage immunity takes damage of the indicated type, they can reduce the damage by the value of the immunity (to a minimum of 0 damage)."
+
+**Immunities:**
+- **0** = No immunity (takes full damage from this type)
+- **Numeric value** = Reduces damage by that amount (e.g., `"poison": 7` reduces poison damage by 7)
+- **1000** = Total immunity (Foundry VTT pattern for "all" immunity - see Kingfissure Tongue)
+- Set value to monster's level or a thematic amount (Vampire Lord L7 has `"poison": 9`)
+
+**Example:** A monster with `"fire": 5` takes 10 fire damage → reduced to 5 damage. If they take 4 fire damage → reduced to 0.
+
+**Total Immunity:** Use `"psychic": 1000` (or similar high value) for complete immunity. Official example: Kingfissure Tongue has `"psychic": 1000`.
+
+**Weaknesses:**
+- **0** = No weakness to this damage type
+- **Numeric value** = Extra damage dealt TO the monster when hit with this type
+
+**Example:** `"holy": 5` means holy attacks deal +5 damage against this monster.
+
+**Order of Operations:** Apply weakness first, then immunity. If a creature has fire weakness 5 and fire immunity 3 and takes 10 fire damage: 10 + 5 = 15, then 15 - 3 = 12 damage.
+
+### Immunity/Weakness Patterns by Creature Type
+
+**Official patterns from Draw Steel monsters:**
+
+| Creature Type | Immunity | Pattern |
+|--------------|----------|---------|
+| **Undead** | poison, corruption | Value = Level (L1→1, L4→4, L10→10) |
+| **Demons** | holy | 1st Echelon (L1-2) = 3, Higher echelons = 5 |
+| **Devils** | fire | Standard = 5, Leaders = 8 |
+| **Dragons** | elemental type | Value ≈ Level (L6 fire dragon → fire 6) |
+| **Draconians** | elemental type | Value = Level (L6 → 6) |
+
+**Leaders/Solos:** Add +2 to immunity values (Vampire Lord L7 has poison 9, Mummy Lord L4 has corruption 6)
+
+**Weaknesses:** Typically fixed at 5 for thematic weaknesses (demons have holy weakness 5)
 
 ## Valid Conditions (Draw Steel Only)
 

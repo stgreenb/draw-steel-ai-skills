@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.0] - 2026-02-21
+
+### Added
+- **Free Strike Calculation:** Documented official rule: free strike equals tier 1 damage from signature ability
+- **Immunity Numeric Values:** Explained damage reduction pattern (value = reduction, 1000 = total immunity)
+- **Immunity Patterns by Creature Type:** Added patterns for undead, demons, devils, dragons
+- **Feature Items:** Documented `type: "feature"` for passive traits
+- **Prior Malice Features Pattern:** Added compendium reference pattern for undead and typed monsters
+- **Summoning Abilities:** Documented malice costs and minion pattern for summons
+- **Solo Turns Field:** Explained `turns: 2` gives two initiative slots
+- **Compendium UUID References:** Added examples for cross-referencing in Foundry VTT
+- **Potency Notation Mapping:** Added markdown-to-JSON conversion table
+
+### Changed
+- **Repository Renamed:** `draw-steel-monster-generator` → `draw-steel-ai-skills`
+- **README.md:** Updated title to "Draw Steel AI Skills", added Retainer Generator to skills list
+- **project.md:** Updated purpose to reflect multi-skill collection
+- **Characteristic Distribution:** Clarified echelon value is guideline for highest characteristic
+
 ## [1.5.0] - 2026-02-05
 
 ### Added

@@ -1,14 +1,15 @@
-# Draw Steel Monster Generator
+# Draw Steel AI Skills
 
-Skills for generating Draw Steel TTRPG content with formula-compliant stat blocks.
+AI skills for generating Draw Steel TTRPG content with formula-compliant stat blocks. Works with Claude Code, OpenCode, Cursor, and other LLM tools.
 
 ## Skills
 
 | Skill | Description |
 |-------|-------------|
-| **Monster Generator** | Creates monsters, retainer followers, and NPCs |
-| **DTO Generator** | Creates Dynamic Terrain Objectives (traps, hazards, siege engines) |
-| **Reward Generator** | Creates treasures and titles |
+| **Monster Generator** | Creates monsters with organization, roles, abilities, and Foundry VTT export |
+| **DTO Generator** | Creates Dynamic Terrain Objectives (traps, hazards, siege engines, fieldworks) |
+| **Reward Generator** | Creates treasures (consumables, trinkets, leveled) and titles |
+| **Retainer Generator** | Creates NPC followers with mentor relationships and advancement |
 
 ## Quick Start
 
@@ -37,12 +38,13 @@ Skills for generating Draw Steel TTRPG content with formula-compliant stat block
 - `"Create a Level 3 Treasure Crown of Shadows"`
 - `"Create a Level 5 Title Dragonslayer"`
 
-**New to OpenCode?** See the [Complete Beginner's Guide](opencode-desktop-tutorial.md) for step-by-step setup instructions on Windows.
+**Don't have a LLM enviroment? Try OpenCode?** See the [Complete Beginner's Guide](opencode-desktop-tutorial.md) for step-by-step setup instructions on Windows.
 
 ## What It Does
 
 - Generates Draw Steel monsters using official Monster Basics formulas
-- Creates Dynamic Terrain Objectives (traps, hazards, mechanisms, siege engines, etc.)
+- Creates Dynamic Terrain Objectives (traps, hazards, mechanisms, siege engines, power fixtures, supernatural objects)
+- Generates retainers (NPC followers) with advancement abilities
 - Generates treasures and titles as rewards
 - Converts content from other systems (D&D 5e, Pathfinder, etc.) - ignores source math, uses for inspiration only
 - Creates and validates Foundry VTT-ready JSON for import
@@ -55,4 +57,4 @@ Skills for generating Draw Steel TTRPG content with formula-compliant stat block
 2. Restart your LLM tool
 3. Skills will be automatically discovered
 
-See [the skill README](.claude/skills/draw-steel-monster-generator/README.md) for detailed platform-specific setup instructions.
+See [the monster skill README](.claude/skills/draw-steel-monster-generator/README.md) for detailed platform-specific setup instructions.
