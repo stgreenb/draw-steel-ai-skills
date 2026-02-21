@@ -978,14 +978,15 @@ Draw Steel DTO:
       "immunities": { "all": 0 },
       "weaknesses": {}
     },
-    "statuses": { "canFlank": false },
+    "statuses": { "immunities": [] },
     "biography": { "value": "", "director": "" },
     "source": { "book": "Dynamic Terrain", "page": "", "license": "Draw Steel Creator License" },
+    "ev": 2,
     "object": {
       "level": 1,
       "category": "trap",
       "role": "ambusher",
-      "area": null,
+      "area": "",
       "squareStamina": false
     }
   },

@@ -658,12 +658,18 @@ DTO abilities use the same structure as monster abilities:
 - Use `type: "object"` for DTOs
 - Use `movement: null` for static objects
 - Use `system.object.category` for DTO type
-- Use `system.statuses.canFlank: false` for most objects
+- Use `system.statuses: {"immunities": []}` for objects
+- Use `system.ev` for Encounter Value (required)
+- Use `system.object.area` as string (e.g., `"4"`) or `""`
 - Use same ability structure as monsters
 - Use `_stats.systemVersion: "0.10.0"`
+- Use `damageDisplay: "melee"` or `"ranged"` (required)
+- Use `target.value` as integer or null (not string)
 
 ### DON'T:
 - Don't use `type: "npc"` for DTOs
 - Don't use `movement: {value: 0}` for static objects - use `null`
 - Don't use monster-specific fields like `monster.role` - use `object.role`
-- Don't forget `canFlank` field in statuses
+- Don't use `statuses: {"canFlank": false}` - use `{"immunities": []}`
+- Don't use `damageDisplay: "none"` or `"other"` - only `"melee"` or `"ranged"`
+- Don't use `target.value: "special"` - must be integer or null
