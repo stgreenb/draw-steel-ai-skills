@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **DTO Image Path Validation:** `validate_dto_json.py` now validates image paths (detects invalid `icons/svg` paths)
 - **DTO Immunity Validation:** `validate_dto_json.py` now validates immunity values are numeric, not boolean
 - **DTO Immunity Documentation:** Added "Damage Immunities & Weaknesses" section explaining numeric values (0=none, level=reduction, 1000=total immunity)
+- **Effect End Value Validation:** Both monster and DTO validators now validate `end` field values in applied effects
+- **Effect End Documentation:** Documented valid `end` values from Draw Steel source code: `turn`, `save`, `encounter`, `respite`, or empty string
 
 ### Changed
 - **DTO JSON Examples:** Updated all `_id` fields to use valid 16-character alphanumeric IDs instead of placeholder names like "BearTrapObject001"
@@ -24,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Foundry Import Failure:** DTOs generated with placeholder IDs (e.g., "SteamPressureVentObject001") now fail validation before export, preventing the "must be a valid 16-character alphanumeric ID" error on import
 - **404 Image Errors:** DTOs generated with invalid image paths (e.g., `fortification.svg`) now fail validation, preventing 404 errors in Foundry VTT
 - **Boolean Immunity Errors:** DTOs generated with boolean immunity values (e.g., `"poison": true`) now fail validation - Foundry expects numeric values like `"poison": 1000` for total immunity
+- **Invalid End Values:** Monsters/DTOs with invalid `end` values like `"healed"` or `"escape"` now fail validation - valid values are `turn`, `save`, `encounter`, `respite`, or empty string
 
 ## [1.6.0] - 2026-02-21
 

@@ -99,6 +99,12 @@ VALID_DAMAGE_TYPES = {
     "sonic",
 }
 
+# Valid effect end types (from ds.CONFIG.effectEnds)
+VALID_EFFECT_ENDS = {"turn", "save", "encounter", "respite", ""}
+
+# Valid potency conditions (from ds.CONST.potencyConditions)
+VALID_POTENCY_CONDITIONS = {"always", "failure", "success"}
+
 VALID_ROLE_IMAGES = {
     "ambusher",
     "artillery",
@@ -489,6 +495,59 @@ def validate_immunities(data: dict, result: ValidationResult) -> None:
                 )
 
 
+def validate_effect_end_values(data: dict, result: ValidationResult) -> None:
+    """Validate that applied effect 'end' values are valid Foundry VTT values.
+
+    Valid values (from ds.CONFIG.effectEnds):
+    - "turn" - End of turn (EoT)
+    - "save" - Save ends
+    - "encounter" - End of encounter
+    - "respite" - Respite
+    - "" (empty string) - Conditional (no fixed duration)
+    """
+    items = data.get("items", [])
+    for item in items:
+        if item.get("type") != "ability":
+            continue
+
+        system = item.get("system", {})
+        ability_name = item.get("name", "Unknown")
+        power = system.get("power", {})
+        effects = power.get("effects", {})
+
+        for effect_id, effect in effects.items():
+            if effect.get("type") != "applied":
+                continue
+
+            applied = effect.get("applied", {})
+            for tier_name in ["tier1", "tier2", "tier3"]:
+                tier = applied.get(tier_name, {})
+                tier_effects = tier.get("effects", {})
+
+                for condition_name, condition_data in tier_effects.items():
+                    end_value = condition_data.get("end")
+                    condition_value = condition_data.get("condition")
+
+                    # Validate end value
+                    if end_value is not None and end_value not in VALID_EFFECT_ENDS:
+                        result.add_error(
+                            f"Ability '{ability_name}' has invalid 'end' value '{end_value}' "
+                            f"for condition '{condition_name}' in {tier_name}. "
+                            f"Valid values: turn, save, encounter, respite, or empty string"
+                        )
+
+                    # Validate condition value
+                    if (
+                        condition_value is not None
+                        and condition_value not in VALID_POTENCY_CONDITIONS
+                    ):
+                        result.add_warning(
+                            f"Ability '{ability_name}' has unusual 'condition' value '{condition_value}' "
+                            f"for effect '{condition_name}' in {tier_name}. "
+                            f"Expected: always, failure, or success"
+                        )
+
+
 def validate_json_file(filepath: str) -> ValidationResult:
     result = ValidationResult()
 
@@ -519,6 +578,7 @@ def validate_json_file(filepath: str) -> ValidationResult:
     validate_ability_keywords(data, result)
     validate_ability_distance(data, result)
     validate_damage_types(data, result)
+    validate_effect_end_values(data, result)
     validate_system_version(data, result)
 
     return result

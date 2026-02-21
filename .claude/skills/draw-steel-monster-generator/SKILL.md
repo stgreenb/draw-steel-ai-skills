@@ -674,6 +674,50 @@ Damage and conditions MUST be structured in `system.power.effects`, NOT as HTML 
 }
 ```
 
+### Valid `end` Values (CRITICAL)
+
+The `end` field in condition effects MUST use these Foundry VTT values (from `ds.CONFIG.effectEnds`):
+
+| `end` Value | Meaning | Markdown | Example Use |
+|-------------|---------|----------|-------------|
+| `"save"` | Save ends | `(save ends)` | Most persistent conditions |
+| `"turn"` | End of turn | `(EoT)` | Short-term effects |
+| `"encounter"` | End of encounter | `until the end of the encounter` | Encounter-long effects |
+| `"respite"` | Respite | `(respite)` | Effects ending during rest |
+| `""` (empty/omit) | Conditional | No duration | grabbed, prone, frightened |
+
+**CRITICAL: These values are NOT valid (will cause Foundry validation errors):**
+- ❌ `"healed"` - NOT used in Draw Steel
+- ❌ `"escape"` - NOT a valid end type
+- ❌ `"eot"` - Use `"turn"` instead
+- ❌ Any other custom values
+
+**Conditional Conditions (omit `end` field or use empty string):**
+
+For grabbed, prone, and frightened, do NOT include an `end` field - these conditions end by specific actions:
+
+```json
+"grabbed": { "condition": "failure", "properties": [] }
+```
+
+**Save Ends Conditions:**
+
+For most persistent conditions, use `"end": "save"`:
+
+```json
+"bleeding": { "condition": "failure", "end": "save", "properties": [] }
+"slowed": { "condition": "failure", "end": "save", "properties": [] }
+"weakened": { "condition": "failure", "end": "save", "properties": [] }
+```
+
+**End of Turn Conditions:**
+
+For short-term effects, use `"end": "turn"`:
+
+```json
+"dazed": { "condition": "failure", "end": "turn", "properties": [] }
+```
+
 ## Movement & Combat Size
 
 **Movement types by creature:**

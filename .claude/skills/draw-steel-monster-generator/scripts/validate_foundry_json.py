@@ -109,6 +109,12 @@ VALID_ABILITY_CATEGORIES = {"heroic", "freeStrike", "signature", "villain"}
 # Valid item types for monsters
 VALID_ITEM_TYPES = {"ability", "feature"}
 
+# Valid effect end types (from ds.CONFIG.effectEnds)
+VALID_EFFECT_ENDS = {"turn", "save", "encounter", "respite", ""}
+
+# Valid potency conditions (from ds.CONST.potencyConditions)
+VALID_POTENCY_CONDITIONS = {"always", "failure", "success"}
+
 
 class ValidationResult:
     def __init__(self):
@@ -886,231 +892,66 @@ def validate_required_fields(data: dict, result: ValidationResult) -> None:
             if isinstance(char_value, dict):
                 if not isinstance(char_value.get("value"), int):
                     result.add_error(f"Invalid system.characteristics.{char}.value")
-            elif isinstance(char_value, int):
-                pass  # Valid integer value
-            else:
-                result.add_error(f"Invalid system.characteristics.{char}")
-
-    # Combat
-    combat = system.get("combat", {})
-    save = combat.get("save", {})
-    if not isinstance(save.get("threshold"), int) or save.get("threshold", 0) < 0:
-        result.add_error(
-            "Missing or invalid system.combat.save.threshold (must be positive integer)"
-        )
-    if (
-        not isinstance(combat.get("size", {}).get("value"), int)
-        or combat.get("size", {}).get("value", 0) < 0
-    ):
-        result.add_error(
-            "Missing or invalid system.combat.size.value (must be positive integer)"
-        )
-
-    # Monster stats
-    monster = system.get("monster", {})
-    if not isinstance(monster.get("level"), int) or monster.get("level", 0) < 0:
-        result.add_error(
-            "Missing or invalid system.monster.level (must be positive integer)"
-        )
-    if not isinstance(monster.get("ev"), int) or monster.get("ev", 0) < 0:
-        result.add_error(
-            "Missing or invalid system.monster.ev (must be positive integer)"
-        )
-
-
-def validate_token_config(data: dict, result: ValidationResult) -> None:
-    """Validate prototypeToken configuration."""
-    token = data.get("prototypeToken", {})
-
-    bar_attr = token.get("bar1", {}).get("attribute")
-    if bar_attr != "stamina":
-        result.add_warning(
-            f"prototypeToken.bar1.attribute should be 'stamina', got '{bar_attr}'"
-        )
-
-    width = token.get("width")
-    height = token.get("height")
-    if width is not None and (not isinstance(width, int) or width < 1):
-        result.add_warning(
-            f"Invalid prototypeToken.width (must be positive integer), got: {width}"
-        )
-    if height is not None and (not isinstance(height, int) or height < 1):
-        result.add_warning(
-            f"Invalid prototypeToken.height (must be positive integer), got: {height}"
-        )
-
-    disposition = token.get("disposition")
-    if disposition is not None and disposition not in (-1, 0, 1):
-        result.add_warning(
-            f"Invalid prototypeToken.disposition (must be -1, 0, or 1), got: {disposition}"
-        )
-
-
-def validate_spend_field(data: dict, result: ValidationResult) -> None:
-    """Validate that all abilities have a spend field, even if empty."""
-    items = data.get("items", [])
-    for item in items:
-        if item.get("type") == "ability":
-            system = item.get("system", {})
-            spend = system.get("spend")
-
-            # Check if spend field exists
-            if spend is None:
-                result.add_error(
-                    f"Ability '{item.get('name', 'Unknown')}' is missing spend field. "
-                    f'Must include "spend": {{"text": "", "value": null}} even if no cost.'
-                )
-            else:
-                # Check structure
-                if not isinstance(spend, dict):
+                # v0.10.0: Validate optional banes/edges fields
+                if "banes" in char_value and not isinstance(
+                    char_value.get("banes"), int
+                ):
                     result.add_error(
-                        f"Ability '{item.get('name', 'Unknown')}' spend field must be an object, "
-                        f"got: {type(spend).__name__}"
+                        f"in {field} text. Draw Steel uses fixed damage values, not dice."
                     )
-                else:
-                    # Check for required keys
-                    if "text" not in spend:
-                        result.add_error(
-                            f"Ability '{item.get('name', 'Unknown')}' spend missing 'text' key. "
-                            f'Must include "text": "".'
-                        )
-                    if "value" not in spend:
-                        result.add_error(
-                            f"Ability '{item.get('name', 'Unknown')}' spend missing 'value' key. "
-                            f'Must include "value": null.'
-                        )
 
 
-def validate_damage_types(data: dict, result: ValidationResult) -> None:
-    """Validate that damage types in power.effects are valid Foundry damage types."""
-    # Valid damage types from Foundry's ds.CONFIG.damageTypes
-    valid_damage_types = {
-        "acid",
-        "cold",
-        "corruption",
-        "fire",
-        "holy",
-        "lightning",
-        "poison",
-        "psychic",
-        "sonic",
-    }
+def validate_effect_end_values(data: dict, result: ValidationResult) -> None:
+    """Validate that applied effect 'end' values are valid Foundry VTT values.
 
-    # D&D terms that are NOT valid in Draw Steel
-    invalid_damage_types = {
-        "physical",
-        "slashing",
-        "bludgeoning",
-        "piercing",
-        "force",
-        "necrotic",
-        "radiant",
-        "thunder",
-        "untyped",
-    }
-
-    items = data.get("items", [])
-    for item in items:
-        if item.get("type") == "ability":
-            system = item.get("system", {})
-            power = system.get("power", {})
-            effects = power.get("effects", {})
-
-            for effect_id, effect in effects.items():
-                if effect.get("type") == "damage":
-                    damage = effect.get("damage", {})
-                    for tier_name in ["tier1", "tier2", "tier3"]:
-                        tier = damage.get(tier_name, {})
-                        types = tier.get("types", [])
-
-                        if not isinstance(types, list):
-                            continue
-
-                        for damage_type in types:
-                            if damage_type in invalid_damage_types:
-                                result.add_error(
-                                    f"Ability '{item.get('name', 'Unknown')}' uses invalid damage type "
-                                    f"'{damage_type}'. Valid Draw Steel types: {', '.join(sorted(valid_damage_types))}, "
-                                    f"or empty array for untyped damage."
-                                )
-                            elif damage_type and damage_type not in valid_damage_types:
-                                result.add_error(
-                                    f"Ability '{item.get('name', 'Unknown')}' uses unknown damage type "
-                                    f"'{damage_type}'. Valid types: {', '.join(sorted(valid_damage_types))}, "
-                                    f"or empty array for untyped damage."
-                                )
-
-
-def validate_dice_notation(data: dict, result: ValidationResult) -> None:
-    """Validate that effect text does not contain D&D-style dice notation (d4, d8, d12, d20).
-
-    Draw Steel uses d3, d6, d10 for specific mechanics, but D&D-style dice
-    (d4, d8, d12, d20) are not valid and indicate D&D/PF2e influence.
+    Valid values (from ds.CONFIG.effectEnds):
+    - "turn" - End of turn (EoT)
+    - "save" - Save ends
+    - "encounter" - End of encounter
+    - "respite" - Respite
+    - "" (empty string) - Conditional (no fixed duration)
     """
-    import re
-
-    # D&D dice types to flag (not valid in Draw Steel)
-    invalid_dice = {"d4", "d8", "d12", "d20"}
-    # Draw Steel dice types (valid but rarely used)
-    valid_dice = {"d3", "d6", "d10"}
-
     items = data.get("items", [])
     for item in items:
-        if item.get("type") == "ability":
-            system = item.get("system", {})
-            ability_name = item.get("name", "Unknown")
+        if item.get("type") != "ability":
+            continue
 
-            # Check effect.before and effect.after text
-            for field in ["before", "after"]:
-                text = system.get("effect", {}).get(field, "")
+        system = item.get("system", {})
+        ability_name = item.get("name", "Unknown")
+        power = system.get("power", {})
+        effects = power.get("effects", {})
 
-                # Find all dice notation patterns (more flexible regex)
-                # Matches: 1d4, 2d8, 1d12, 3d20, etc. (case-insensitive)
-                dice_matches = re.findall(r"\d+d\d+", text, re.IGNORECASE)
+        for effect_id, effect in effects.items():
+            if effect.get("type") != "applied":
+                continue
 
-                for dice in dice_matches:
-                    dice_lower = dice.lower()
+            applied = effect.get("applied", {})
+            for tier_name in ["tier1", "tier2", "tier3"]:
+                tier = applied.get(tier_name, {})
+                tier_effects = tier.get("effects", {})
 
-                    # Check if it's D&D-style dice (d4, d8, d12, d20)
-                    for invalid_die in invalid_dice:
-                        if invalid_die in dice_lower:
-                            result.add_error(
-                                f"Ability '{ability_name}' contains D&D-style dice notation '{dice}' "
-                                f"in {field} text. Draw Steel uses fixed damage values, not {invalid_die}."
-                            )
-                            break
+                for condition_name, condition_data in tier_effects.items():
+                    end_value = condition_data.get("end")
+                    condition_value = condition_data.get("condition")
 
-                    # Check for other invalid dice (not d3, d6, d10)
-                    dice_parts = dice_lower.split("d")
-                    if len(dice_parts) == 2:
-                        die_type = "d" + dice_parts[1]
-                        if die_type not in valid_dice and die_type not in invalid_dice:
-                            result.add_error(
-                                f"Ability '{ability_name}' contains invalid dice notation '{dice}' "
-                                f"in {field} text. Draw Steel uses fixed damage values, not dice."
-                            )
-                            break
+                    # Validate end value
+                    if end_value is not None and end_value not in VALID_EFFECT_ENDS:
+                        result.add_error(
+                            f"Ability '{ability_name}' has invalid 'end' value '{end_value}' "
+                            f"for condition '{condition_name}' in {tier_name}. "
+                            f"Valid values: turn, save, encounter, respite, or empty string"
+                        )
 
-                    # Check for other invalid dice (not d3, d6, d10)
-                    dice_parts = dice_lower.split("d")
-                    if len(dice_parts) == 2:
-                        die_type = "d" + dice_parts[1]
-                        if die_type not in valid_dice and die_type not in invalid_dice:
-                            result.add_error(
-                                f"Ability '{ability_name}' contains invalid dice notation '{dice}' "
-                                f"in {field} text. Draw Steel uses fixed damage values, not dice."
-                            )
-                            break
-
-                    # Check for other invalid dice (not d3, d6, d10)
-                    dice_parts = dice_lower.split("d")
-                    if len(dice_parts) == 2:
-                        die_type = "d" + dice_parts[1]
-                        if die_type not in valid_dice and die_type not in invalid_dice:
-                            result.add_error(
-                                f"Ability '{ability_name}' contains invalid dice notation '{dice}' "
-                                f"in {field} text. Draw Steel uses fixed damage values, not dice."
-                            )
+                    # Validate condition value
+                    if (
+                        condition_value is not None
+                        and condition_value not in VALID_POTENCY_CONDITIONS
+                    ):
+                        result.add_warning(
+                            f"Ability '{ability_name}' has unusual 'condition' value '{condition_value}' "
+                            f"for effect '{condition_name}' in {tier_name}. "
+                            f"Expected: always, failure, or success"
+                        )
 
 
 def validate_json_file(filepath: str) -> ValidationResult:
@@ -1157,6 +998,8 @@ def validate_json_file(filepath: str) -> ValidationResult:
     validate_spend_field(data, result)
     validate_damage_types(data, result)
     validate_dice_notation(data, result)
+    validate_effect_end_values(data, result)
+    validate_v010_fields(data, result)
 
     return result
 
