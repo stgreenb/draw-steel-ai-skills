@@ -342,7 +342,7 @@ Solo and Leader monsters MUST have exactly 3 villain actions. These are special 
 
 **Villain Actions vs Malice Abilities:**
 - **Villain Actions**: type="villain", category="villain", resource=null, 3 per Solo/Leader, once per encounter
-- **Malice Abilities**: type varies (main/maneuver/none/triggered), category="heroic" or "none", resource=1-10, 2-3 per Elite/Leader, 3 per Solo
+- **Malice Abilities**: type varies (main/maneuver/none/triggered), category="heroic" or "none", resource=1-10, 0-2 per Platoon/Horde, 2-3 per Elite/Leader, 3 per Solo
 
 ### Common Ability Patterns
 

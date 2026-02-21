@@ -428,6 +428,27 @@ Based on Bestiary analysis, most monsters have maneuvers, but **Minions NEVER ha
 
 ---
 
+## Malice Abilities by Organization
+
+Based on official Draw Steel monsters, malice ability counts vary by organization:
+
+| Organization | Malice Abilities | Notes |
+|--------------|------------------|-------|
+| **Minion** | ❌ 0 | Never have malice abilities |
+| **Horde** | 0-2 | Optional, usually 1-2 unique abilities |
+| **Platoon** | 0-2 | Optional, may have shared faction abilities |
+| **Elite** | 2-3 | Expected to have malice abilities |
+| **Leader** | 2-3 | Plus 3 villain actions |
+| **Solo** | 3 | Plus 3 villain actions |
+
+**Malice costs range from 2-10**, with common values:
+- **2-3**: Minor abilities, utility effects
+- **5**: Standard ability cost
+- **7**: Powerful abilities
+- **10**: Ultimate-level effects
+
+---
+
 ## Advanced Features
 
 ### ⚠️ Villain Actions (Leaders and Solos Only)
