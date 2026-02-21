@@ -240,7 +240,7 @@ def validate_monster_keywords(data: dict, result: ValidationResult) -> None:
     keywords = monster.get("keywords", [])
 
     for keyword in keywords:
-        if keyword not in VALID_MONSTER_KEYWORDS:
+        if keyword.lower() not in VALID_MONSTER_KEYWORDS:
             result.add_error(
                 f"Invalid monster keyword '{keyword}'. "
                 f"Must be one of: {', '.join(sorted(VALID_MONSTER_KEYWORDS))}"
@@ -256,7 +256,7 @@ def validate_ability_keywords(data: dict, result: ValidationResult) -> None:
             keywords = system.get("keywords", [])
 
             for keyword in keywords:
-                if keyword not in VALID_ABILITY_KEYWORDS:
+                if keyword.lower() not in VALID_ABILITY_KEYWORDS:
                     result.add_error(
                         f"Ability '{item.get('name', 'Unknown')}' has invalid keyword '{keyword}'. "
                         f"Must be one of: {', '.join(sorted(VALID_ABILITY_KEYWORDS))}"
