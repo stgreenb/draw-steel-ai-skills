@@ -30,11 +30,11 @@ This document provides the exact JSON structure required when generating Foundry
     },
     "movement": null,
     "damage": {
-      "immunities": {"all": 0},
-      "weaknesses": {}
+      "immunities": {"all": 0, "acid": 0, "cold": 0, "corruption": 0, "fire": 0, "holy": 0, "lightning": 0, "poison": 0, "psychic": 0, "sonic": 0},
+      "weaknesses": {"all": 0, "acid": 0, "cold": 0, "corruption": 0, "fire": 0, "holy": 0, "lightning": 0, "poison": 0, "psychic": 0, "sonic": 0}
     },
     "statuses": {
-      "canFlank": false
+      "immunities": []
     },
     "biography": {
       "value": "",
@@ -45,11 +45,12 @@ This document provides the exact JSON structure required when generating Foundry
       "page": "",
       "license": "Draw Steel Creator License"
     },
+    "ev": 2,
     "object": {
       "level": 1,
       "category": "trap",
       "role": "ambusher",
-      "area": null,
+      "area": "",
       "squareStamina": false
     }
   },
@@ -104,23 +105,39 @@ This document provides the exact JSON structure required when generating Foundry
 |-------|------|----------|-------------|
 | `level` | integer | Yes | DTO level (typically 1-5) |
 | `category` | string | Yes | One of: `hazard`, `trap`, `trigger`, `siegeEngine`, `relic`, `fortification` |
-| `role` | string | No | Same roles as monsters, or `""` |
-| `area` | integer/null | No | Number of squares for multi-square DTOs |
+| `role` | string | Yes | Same roles as monsters (e.g., `defender`, `hexer`, `ambusher`) |
+| `area` | string | Yes | Number of squares as string (e.g., `"4"`) or `""` for single-square |
 | `squareStamina` | boolean | No | `true` if stamina is per-square |
+
+### system.ev
+
+**REQUIRED** - Encounter Value for the DTO:
+
+| DTO Type | Typical EV |
+|----------|------------|
+| Level 1 Hazard/Trap | 1-2 |
+| Level 2 Hazard | 2-3 |
+| Level 3 Hazard | 3-4 |
+| Level 2 Siege Engine | 8 |
+| Level 3 Siege Engine | 10 |
+| Level 3 Supernatural Object | 20 |
 
 ### system.movement
 
 | Value | When to Use |
 |-------|-------------|
 | `null` | Static objects (most DTOs) |
-| `{"value": 3, "types": ["walk"], "hover": false, "disengage": 0}` | Mobile siege engines or moving hazards |
+| `{"value": 3, "types": ["walk"], "hover": false, "disengage": null}` | Mobile siege engines or moving hazards |
 
-### system.statuses.canFlank
+### system.statuses
 
-| Value | When to Use |
-|-------|-------------|
-| `false` | Default for objects - most cannot flank |
-| `true` | Rare - only for objects that can coordinate attacks |
+Objects use `immunities` array, not `canFlank`:
+
+```json
+"statuses": {
+  "immunities": []
+}
+```
 
 ## Stamina Patterns
 
@@ -129,42 +146,45 @@ This document provides the exact JSON structure required when generating Foundry
 ```json
 {
   "stamina": {"value": 6, "max": 6, "temporary": 0},
+  "ev": 2,
   "object": {
-    "area": null,
+    "area": "",
     "squareStamina": false
   }
 }
 ```
 
-**Examples:** Bear Trap (6), Dart Trap (3), Holy Idol (35), Black Obelisk (100)
+**Examples:** Bear Trap (6, EV 2), Dart Trap (3, EV 1), Holy Idol (35, EV 7), Black Obelisk (100, EV 20)
 
 ### Per-Square Stamina (Multi-Square Terrain)
 
 ```json
 {
   "stamina": {"value": 3, "max": 3, "temporary": 0},
+  "ev": 1,
   "object": {
-    "area": 4,
+    "area": "4",
     "squareStamina": true
   }
 }
 ```
 
-**Examples:** Brambles (3/sq), Lava (12/sq), Archer's Stakes (3/sq)
+**Examples:** Brambles (3/sq, EV 1/10×10), Lava (12/sq, EV 4/10×10), Archer's Stakes (3/sq, EV 2)
 
 ### No Stamina (Indestructible or Trigger)
 
 ```json
 {
-  "stamina": {"value": 0, "max": 0, "temporary": 0},
+  "stamina": {"value": null, "max": 0, "temporary": 0},
+  "ev": 2,
   "object": {
-    "area": null,
+    "area": "",
     "squareStamina": false
   }
 }
 ```
 
-**Examples:** Pressure Plate, Quicksand (-), Hidey-Hole (-)
+**Examples:** Pressure Plate (EV 2), Quicksand (EV varies), Hidey-Hole (EV 1)
 
 ## Damage Immunities
 
@@ -257,15 +277,16 @@ DTO abilities use the same structure as monster abilities:
       "turns": 0
     },
     "movement": null,
-    "damage": {"immunities": {"all": 0}, "weaknesses": {}},
-    "statuses": {"canFlank": false},
+    "damage": {"immunities": {"all": 0, "acid": 0, "cold": 0, "corruption": 0, "fire": 0, "holy": 0, "lightning": 0, "poison": 0, "psychic": 0, "sonic": 0}, "weaknesses": {"all": 0, "acid": 0, "cold": 0, "corruption": 0, "fire": 0, "holy": 0, "lightning": 0, "poison": 0, "psychic": 0, "sonic": 0}},
+    "statuses": {"immunities": []},
     "biography": {"value": "", "director": ""},
     "source": {"book": "Dynamic Terrain", "page": "", "license": "Draw Steel Creator License"},
+    "ev": 2,
     "object": {
       "level": 1,
       "category": "trap",
       "role": "ambusher",
-      "area": null,
+      "area": "",
       "squareStamina": false
     }
   },
@@ -280,6 +301,26 @@ DTO abilities use the same structure as monster abilities:
     "texture": {"src": "systems/draw-steel/assets/roles/ambusher.webp"}
   },
   "items": [
+    {
+      "name": "Deactivate",
+      "type": "feature",
+      "img": "icons/commodities/tech/console-steel.webp",
+      "system": {
+        "description": {"value": "<p>As a maneuver, a creature adjacent to a bear trap can make an Agility test.</p><ul><li><strong>≤11:</strong> The creature triggers the trap.</li><li><strong>12-16:</strong> The trap is deactivated but the creature is slowed (EoT).</li><li><strong>17+:</strong> The trap is deactivated and doesn't trigger.</li></ul>", "director": ""},
+        "source": {"book": "Dynamic Terrain", "license": "Draw Steel Creator License"}
+      },
+      "_id": "BearTrapDeactivate001"
+    },
+    {
+      "name": "Activate",
+      "type": "feature",
+      "img": "icons/skills/targeting/crosshair-ringed-gray.webp",
+      "system": {
+        "description": {"value": "<p>The bear trap is calibrated to be triggered by creatures or objects of a particular size. The trap triggers when a creature or object of the appropriate size enters its space.</p><p><strong>Effect:</strong> A triggering creature or object ends their movement and is targeted by the Bear Trap ability.</p>", "director": ""},
+        "source": {"book": "Dynamic Terrain", "license": "Draw Steel Creator License"}
+      },
+      "_id": "BearTrapActivate001"
+    },
     {
       "name": "Bear Trap",
       "type": "ability",
@@ -358,17 +399,18 @@ DTO abilities use the same structure as monster abilities:
     },
     "movement": null,
     "damage": {
-      "immunities": {"all": 20},
-      "weaknesses": {"cold": 5}
+      "immunities": {"all": 20, "acid": 0, "cold": 0, "corruption": 0, "fire": 0, "holy": 0, "lightning": 0, "poison": 0, "psychic": 0, "sonic": 0},
+      "weaknesses": {"all": 0, "acid": 0, "cold": 5, "corruption": 0, "fire": 0, "holy": 0, "lightning": 0, "poison": 0, "psychic": 0, "sonic": 0}
     },
-    "statuses": {"canFlank": false},
+    "statuses": {"immunities": []},
     "biography": {"value": "", "director": ""},
     "source": {"book": "Dynamic Terrain", "page": "", "license": "Draw Steel Creator License"},
+    "ev": 4,
     "object": {
       "level": 3,
       "category": "hazard",
       "role": "hexer",
-      "area": 4,
+      "area": "",
       "squareStamina": true
     }
   },
@@ -383,6 +425,26 @@ DTO abilities use the same structure as monster abilities:
     "texture": {"src": "systems/draw-steel/assets/roles/hexer.webp"}
   },
   "items": [
+    {
+      "name": "Deactivate",
+      "type": "feature",
+      "img": "icons/commodities/tech/console-steel.webp",
+      "system": {
+        "description": {"value": "<p>Each square of lava must be individually destroyed.</p>", "director": ""},
+        "source": {"book": "Dynamic Terrain", "license": "Draw Steel Creator License"}
+      },
+      "_id": "LavaDeactivate001"
+    },
+    {
+      "name": "Activate",
+      "type": "feature",
+      "img": "icons/skills/targeting/crosshair-ringed-gray.webp",
+      "system": {
+        "description": {"value": "<p>A creature or object enters the lava or starts their turn there, or starts their turn adjacent to the lava.</p><p><strong>Effect:</strong> The Liquid Hot Magma ability.</p>", "director": ""},
+        "source": {"book": "Dynamic Terrain", "license": "Draw Steel Creator License"}
+      },
+      "_id": "LavaActivate001"
+    },
     {
       "name": "Liquid Hot Magma",
       "type": "ability",
@@ -416,7 +478,7 @@ DTO abilities use the same structure as monster abilities:
             }
           }
         },
-        "effect": {"before": "", "after": ""},
+        "effect": {"before": "", "after": "<p>A burning creature takes 1d6 fire damage at the start of each of their turns.</p>"},
         "spend": {"text": "", "value": null},
         "source": {"book": "Dynamic Terrain", "license": "Draw Steel Creator License"}
       },
@@ -451,15 +513,16 @@ DTO abilities use the same structure as monster abilities:
       "turns": 0
     },
     "movement": null,
-    "damage": {"immunities": {"all": 0}, "weaknesses": {}},
-    "statuses": {"canFlank": false},
+    "damage": {"immunities": {"all": 0, "acid": 0, "cold": 0, "corruption": 0, "fire": 0, "holy": 0, "lightning": 0, "poison": 0, "psychic": 0, "sonic": 0}, "weaknesses": {"all": 0, "acid": 0, "cold": 0, "corruption": 0, "fire": 0, "holy": 0, "lightning": 0, "poison": 0, "psychic": 0, "sonic": 0}},
+    "statuses": {"immunities": []},
     "biography": {"value": "", "director": ""},
     "source": {"book": "Dynamic Terrain", "page": "", "license": "Draw Steel Creator License"},
+    "ev": 8,
     "object": {
       "level": 2,
       "category": "siegeEngine",
       "role": "artillery",
-      "area": null,
+      "area": "",
       "squareStamina": false
     }
   },
