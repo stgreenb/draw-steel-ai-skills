@@ -1151,9 +1151,34 @@ The Draw Steel system does NOT have category-specific icons (no `trap.svg`, `haz
 | `system.object.level` | integer | DTO level (1-5 typically) |
 | `system.object.category` | string | One of: `hazard`, `trap`, `trigger`, `siegeEngine`, `relic`, `fortification` |
 | `system.object.role` | string | Same roles as monsters: `ambusher`, `artillery`, `brute`, `controller`, `defender`, `harrier`, `hexer`, `mount`, `support`, or `""` |
-| `system.object.area` | integer/null | Number of squares for multi-square DTOs |
+| `system.object.area` | string | Number of squares as string (e.g., `"4"`) or `""` for single-square |
 | `system.object.squareStamina` | boolean | `true` if stamina is per-square |
+| `system.ev` | integer | **REQUIRED** - Encounter Value (e.g., 1-4 for hazards, 8-12 for siege engines) |
 | `system.movement` | null/object | `null` for static objects, object with movement for mobile |
+
+### Ability Fields (Critical)
+
+**damageDisplay** (Required):
+```json
+// CORRECT - Only valid values:
+"damageDisplay": "melee"   // For melee attacks
+"damageDisplay": "ranged"  // For ranged attacks
+
+// WRONG - These cause validation errors:
+"damageDisplay": "none"    // ❌ NOT VALID
+"damageDisplay": "other"   // ❌ NOT VALID
+"damageDisplay": ""        // ❌ NOT VALID
+```
+
+**target.value** (Required integer):
+```json
+// CORRECT:
+"target": {"type": "creatureObject", "value": 1}                    // Single target
+"target": {"type": "creatureObject", "value": null, "custom": "..."}  // Multiple targets
+
+// WRONG:
+"target": {"type": "creatureObject", "value": "special"}  // ❌ String not allowed
+```
 
 ### Static vs Mobile Objects
 
