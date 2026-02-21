@@ -16,11 +16,11 @@ This document provides the exact JSON structure required when generating Foundry
       "temporary": 0
     },
     "characteristics": {
-      "might": {"value": 0},
-      "agility": {"value": 0},
-      "reason": {"value": 2},
-      "intuition": {"value": 1},
-      "presence": {"value": 0}
+      "might": {"value": 0, "banes": 0, "edges": 0},
+      "agility": {"value": 0, "banes": 0, "edges": 0},
+      "reason": {"value": 2, "banes": 0, "edges": 0},
+      "intuition": {"value": 1, "banes": 0, "edges": 0},
+      "presence": {"value": 0, "banes": 0, "edges": 0}
     },
     "combat": {
       "save": {"threshold": 6, "bonus": ""},
@@ -37,6 +37,9 @@ This document provides the exact JSON structure required when generating Foundry
     "damage": {
       "immunities": {"fire": 0, "cold": 0, "corruption": 0, "acid": 0, "lightning": 0, "poison": 0, "psychic": 0, "sonic": 0, "holy": 0},
       "weaknesses": {}
+    },
+    "statuses": {
+      "canFlank": true
     },
     "negotiation": {
       "interest": 5,
@@ -77,7 +80,7 @@ This document provides the exact JSON structure required when generating Foundry
   "items": [],
   "_stats": {
     "systemId": "draw-steel",
-    "systemVersion": "0.9.0"
+    "systemVersion": "0.10.0"
   },
   "_id": "uuid-here"
 }
@@ -664,7 +667,7 @@ Villain actions use `type: "ability"` with `system.type: "villain"` and `system.
   ],
   "_stats": {
     "systemId": "draw-steel",
-    "systemVersion": "0.9.0"
+    "systemVersion": "0.10.0"
   },
   "_id": "AncientBlackDragon001"
 }
@@ -937,7 +940,7 @@ Villain actions use `type: "ability"` with `system.type: "villain"` and `system.
   ],
   "_stats": {
     "systemId": "draw-steel",
-    "systemVersion": "0.9.0"
+    "systemVersion": "0.10.0"
   },
   "_id": "OrcWarChief001"
 }
@@ -969,3 +972,116 @@ Villain actions use `type: "ability"` with `system.type: "villain"` and `system.
 - Solo
 
 Villain Actions represent coordinated tactics and dramatic moments appropriate for boss-level creatures. A Minotaur Skeleton Platoon Brute should not have villain actions - those belong to leaders and solos.
+
+---
+
+## v0.10.0 New Fields
+
+### Characteristic Banes and Edges
+
+Each characteristic now includes `banes` and `edges` fields for base test modifiers:
+
+```json
+"characteristics": {
+  "might": {"value": 2, "banes": 0, "edges": 0},
+  "agility": {"value": 1, "banes": 0, "edges": 1},
+  "reason": {"value": 0, "banes": 0, "edges": 0},
+  "intuition": {"value": 1, "banes": 0, "edges": 0},
+  "presence": {"value": -1, "banes": 1, "edges": 0}
+}
+```
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `value` | integer | varies | Characteristic modifier (-5 to +5) |
+| `banes` | integer | `0` | Base banes on tests using this characteristic |
+| `edges` | integer | `0` | Base edges on tests using this characteristic |
+
+### Flanking Status
+
+The `system.statuses.canFlank` field controls whether a creature can flank:
+
+```json
+"statuses": {
+  "canFlank": true
+}
+```
+
+| Value | When to Use |
+|-------|-------------|
+| `true` | Default - most monsters can flank |
+| `false` | Swarms, amorphous creatures, or creatures that cannot coordinate |
+
+### Hide In Sheet Flag
+
+Items can be hidden from the actor sheet using the `hideInSheet` flag:
+
+```json
+{
+  "name": "Hidden Ability",
+  "type": "ability",
+  "flags": {
+    "drawSteel": {
+      "hideInSheet": true
+    }
+  }
+}
+```
+
+### Prerequisites on Items
+
+Abilities and features can specify class/subclass prerequisites:
+
+```json
+{
+  "name": "Class Ability",
+  "type": "ability",
+  "system": {
+    "prerequisites": {
+      "dsid": ["tactician", "vanguard"],
+      "level": 3
+    }
+  }
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `dsid` | array | DSIDs of classes/subclasses this item is eligible for |
+| `level` | integer | Minimum level requirement |
+
+### Ability Modifier Keys (v0.10.0)
+
+New modifier keys for abilities:
+
+```json
+{
+  "system": {
+    "power": {
+      "roll": {
+        "formula": "@chr",
+        "characteristics": ["might"],
+        "banes": 0,
+        "edges": 1
+      }
+    },
+    "forced": {
+      "pull": 2,
+      "push": 3,
+      "slide": 2
+    },
+    "potency": {
+      "value": 1
+    }
+  }
+}
+```
+
+| Field | Location | Description |
+|-------|----------|-------------|
+| `power.roll.banes` | Ability | Base banes on the power roll |
+| `power.roll.edges` | Ability | Base edges on the power roll |
+| `forced.pull` | Ability | Adjusted pull distance |
+| `forced.push` | Ability | Adjusted push distance |
+| `forced.slide` | Ability | Adjusted slide distance |
+| `potency.value` | Ability | Potency adjustment |
