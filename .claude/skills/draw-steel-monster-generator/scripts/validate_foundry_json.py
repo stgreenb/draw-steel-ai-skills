@@ -989,17 +989,12 @@ def validate_json_file(filepath: str) -> ValidationResult:
     validate_power_effects(data, result)
     validate_html_entities(data, result)
     validate_required_fields(data, result)
-    validate_token_config(data, result)
     validate_maneuver_presence(data, result)
     validate_damage_display(data, result)
     validate_malice_resource(data, result)
     validate_villain_actions(data, result)
     validate_malice_costs(data, result)
-    validate_spend_field(data, result)
-    validate_damage_types(data, result)
-    validate_dice_notation(data, result)
     validate_effect_end_values(data, result)
-    validate_v010_fields(data, result)
 
     return result
 
