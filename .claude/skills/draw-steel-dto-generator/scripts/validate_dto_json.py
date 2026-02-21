@@ -548,6 +548,42 @@ def validate_effect_end_values(data: dict, result: ValidationResult) -> None:
                         )
 
 
+VALID_DAMAGE_DISPLAY = {"melee", "ranged"}
+
+
+def validate_ability_fields(data: dict, result: ValidationResult) -> None:
+    """
+    Validate ability damageDisplay and target.value fields.
+
+    damageDisplay must be "melee" or "ranged" (NOT "none", "other", or empty).
+    target.value must be an integer or null (NOT a string).
+    """
+    items = data.get("items", [])
+    for item in items:
+        if item.get("type") != "ability":
+            continue
+
+        system = item.get("system", {})
+        ability_name = item.get("name", "Unknown")
+
+        # Validate damageDisplay
+        damage_display = system.get("damageDisplay")
+        if damage_display not in VALID_DAMAGE_DISPLAY:
+            result.add_error(
+                f"Ability '{ability_name}' has invalid damageDisplay '{damage_display}'. "
+                f"Must be 'melee' or 'ranged'."
+            )
+
+        # Validate target.value
+        target = system.get("target", {})
+        target_value = target.get("value")
+        if target_value is not None and not isinstance(target_value, int):
+            result.add_error(
+                f"Ability '{ability_name}' has invalid target.value '{target_value}'. "
+                f"Must be an integer or null."
+            )
+
+
 def validate_json_file(filepath: str) -> ValidationResult:
     result = ValidationResult()
 
@@ -577,6 +613,7 @@ def validate_json_file(filepath: str) -> ValidationResult:
     validate_item_types(data, result)
     validate_ability_keywords(data, result)
     validate_ability_distance(data, result)
+    validate_ability_fields(data, result)
     validate_damage_types(data, result)
     validate_effect_end_values(data, result)
     validate_system_version(data, result)

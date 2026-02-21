@@ -243,6 +243,34 @@ DTO abilities use the same structure as monster abilities:
 }
 ```
 
+### damageDisplay (Required)
+
+**Valid values:** Only `"melee"` or `"ranged"`
+
+```json
+// CORRECT
+"damageDisplay": "melee"   // For melee attacks
+"damageDisplay": "ranged"  // For ranged attacks
+
+// WRONG - These will cause validation errors:
+"damageDisplay": "none"    // ❌ NOT VALID
+"damageDisplay": "other"   // ❌ NOT VALID
+"damageDisplay": ""        // ❌ NOT VALID (required field)
+```
+
+### target.value (Required Integer)
+
+**Must be an integer**, not a string or null:
+
+```json
+// CORRECT
+"target": {"type": "creatureObject", "value": 1}      // Single target
+"target": {"type": "creatureObject", "value": null, "custom": "Each enemy in burst"}  // Multiple targets
+
+// WRONG
+"target": {"type": "creatureObject", "value": "special"}  // ❌ String not allowed
+```
+
 ## Ability Types for DTOs
 
 | Ability Type | When to Use | Example |
