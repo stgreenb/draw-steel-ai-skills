@@ -43,34 +43,15 @@ Generate Draw Steel TTRPG rewards (treasures and titles) that strictly conform t
 - Use D&D/PF2e characteristics (STR, DEX, CON, WIS, CHA)
 - Try to recreate D&D/PF2e items - create NEW rewards that fit the theme
 
+> **When converting from other systems:** `../shared/ANTI_PATTERNS.md`
+> **When validating damage types or conditions:** `../shared/DRAW_STEEL_BASICS.md`
+
 ### Conversion Input Format
 
 - `"Convert [Reward Name] from [System], [Echelon] [options]"`
 - `"Convert [Reward Name]: [stat block/description] [options]"`
 
 **Example:** `"Convert Vorpal Sword from D&D 5e, 3rd Echelon Leveled Treasure --format foundry"`
-
-### D&D/PF2e Anti-Patterns (NEVER USE)
-
-| D&D/PF2e Term | Draw Steel Approach | Never Use |
-|---------------|---------------------|-----------|
-| "hit points"/"HP" | Stamina | Use "stamina" not "hit points" |
-| "saving throw"/"save DC" | Power roll with potency | Use "power roll" not "saving throw" |
-| "ability score" (STR/DEX/etc) | Characteristics (Might/Agility/etc) | Use Draw Steel characteristics |
-| "proficiency bonus" | - | Not used in Draw Steel |
-| "attunement" | - | Not used in Draw Steel |
-| "charges" | Uses/quantity | Use "quantity" or "uses" |
-| "spell slots" | - | Not used in Draw Steel |
-| "concentration" | - | Not used in Draw Steel |
-| "armor class"/"AC" | - | Not used in Draw Steel |
-| "critical hit" | - | Draw Steel uses crits but doesn't name them |
-| "action economy" | Main action, maneuver, triggered | Use Draw Steel action types |
-| "bonus action" | Maneuver | Use "maneuver" not "bonus action" |
-| "reaction" | Triggered action | Use "triggered action" not "reaction" |
-| "short rest"/"long rest" | Respite | Use "respite" not "short/long rest" |
-| "dice notation" (1d6, 2d8, etc) | FIXED damage values | Use "6", "11", "14" NOT "1d6+3" |
-| "damage types" | Draw Steel damage types only | See Valid Damage Types below |
-| "conditions" | Draw Steel conditions only | See Valid Conditions below |
 
 ### Conversion Rules
 
@@ -87,129 +68,20 @@ Generate Draw Steel TTRPG rewards (treasures and titles) that strictly conform t
 - **Project Roll:** Use characteristic-based power rolls with potency
 - **Effects:** Use Draw Steel action types (maneuver, triggered) and conditions
 
-## Draw Steel Terminology (Critical Reference)
-
-### Valid Damage Types (CRITICAL!)
-
-**ONLY these damage types are valid in Draw Steel:**
-- `acid`, `cold`, `corruption`, `fire`, `holy`, `lightning`, `poison`, `psychic`, `sonic`
-
-**INVALID damage types (D&D terminology - will cause issues):**
-- `physical`, `slashing`, `bludgeoning`, `piercing`, `force`, `necrotic`, `radiant`, `thunder`, `untyped`
-
-**For untyped damage:** Use empty array `"types": []` or describe in effect text
-
-### Valid Conditions (Draw Steel Only)
-
-**ONLY these conditions are valid in Draw Steel:**
-- `bleeding`, `dazed`, `frightened`, `grabbed`, `prone`, `restrained`, `slowed`, `taunted`, `weakened`
-
-**Condition Duration Rules:**
-
-**CRITICAL:** Draw Steel uses TWO condition duration patterns:
-
-| Pattern | Format | When to Use | How It Ends |
-|---------|--------|-------------|-------------|
-| **Save ends** | `[condition] (save ends)` | Most conditions in combat | Target makes a save at end of each turn to end condition |
-| **Until end of next turn** | `[condition] until the end of your next turn` | Temporary buffs/debuffs | Condition ends automatically at end of your next turn |
-| **Until end of encounter** | `[condition] until the end of the encounter` | Special effects (summons, ongoing effects) | Condition ends when encounter ends or when you die |
-
-**Conditional Conditions (no duration specified):**
-- **grabbed** - Ends by escape, release, or breaking adjacency
-- **prone** - Ends by standing up maneuver
-- **frightened** - Ends when source changes or is removed
-
-**Examples from Published Content:**
-- "slowed (save ends)" - Target makes save each turn to end
-- "weakened (save ends)" - Target makes save each turn to end
-- "dazed until the end of your next turn" - Temporary effect
-- "judged until the end of the encounter" - Ongoing effect
-- "grabbed" - No duration, ends by action
-
-**NEVER Use "until healed":**
-- NOT used in published Draw Steel content
-- Conditions end by save, by specific action, or by time
-- Healing removes damage, not conditions (conditions have their own mechanics)
-
-**CRITICAL:** Condition durations are applied by reward effects. Use the correct format based on the pattern.
-
-### Valid Characteristics
-
-**ONLY these characteristics are valid in Draw Steel:**
-- **Might:** Physical strength and force
-- **Agility:** Speed, reflexes, coordination
-- **Reason:** Intellect, logic, technical knowledge
-- **Intuition:** Perception, insight, magical/psionic aptitude
-- **Presence:** Charisma, force of personality, leadership
-
-**INVALID characteristics (D&D terminology - NEVER USE):**
-- `STR`, `DEX`, `CON`, `INT`, `WIS`, `CHA`
-
-### Valid Action Types
-
-**ONLY these action types are valid in Draw Steel:**
-- **Main Action:** Primary combat abilities
-- **Maneuver:** Movement/positioning (doesn't consume main action)
-- **Triggered Action:** Immediate reactions to conditions
-- **Free Action:** Quick actions that don't count as maneuvers
-- **Respite Activity:** Actions taken during rests
-
-**INVALID action types (D&D terminology - NEVER USE):**
-- `bonus action`, `reaction`, `full action`, `standard action`
-
-### Valid Potencies
-
-**ONLY these potencies are valid in Draw Steel:**
-- **Weak:** Characteristic - 2
-- **Average:** Characteristic - 1
-- **Strong:** Characteristic (Leader/Solo +1)
-
-**Potencies are used in power rolls to determine effect strength.**
-
 ## Fixed Damage Values (CRITICAL!)
 
-**Draw Steel NEVER uses dice notation for damage or effects.**
+Draw Steel NEVER uses dice notation. Always use fixed values calculated from Draw Steel formulas.
 
-### What This Means
+- ❌ WRONG: "1d6+3 damage"
+- ✅ CORRECT: "6 damage"
 
-**✅ CORRECT (Fixed Values):**
-- "deals 6 fire damage"
-- "gain 11 stamina"
-- "+3 to damage"
-- "immunity 5 to cold"
-- "5 poison damage"
+**Common fixed damage values in Draw Steel rewards:**
+- Extra damage on strikes: 1-5 (echelon 1), 5-10 (echelon 2-3)
+- Area/environmental damage: 5 (echelon 1-2), 10 (echelon 2-3), 20 (echelon 4)
+- Weapon enhancement: +1 to +3 damage bonus
 
-**❌ WRONG (Dice Notation):**
-- "deals 1d6 fire damage"
-- "gain 2d4+2 stamina"
-- "+1d4 to damage"
-- "immunity 1d10 to cold"
-- "2d6 poison damage"
-
-### Prohibited Dice Types
-
-**NEVER use these dice types in reward descriptions:**
-- `d4` - D&D dice, not used in Draw Steel
-- `d8` - D&D dice, not used in Draw Steel
-- `d12` - D&D dice, not used in Draw Steel
-- `d20` - D&D dice, not used in Draw Steel
-
-**If you see any of these dice types in your output, it's WRONG.**
-
-### How to Convert D&D Dice to Draw Steel Fixed Values
-
-| D&D Dice | Draw Steel Fixed Value | When to Use |
-|----------|------------------------|-------------|
-| 1d4 | 3-4 | Low damage/effects |
-| 1d6 | 5-6 | Low-mid damage/effects |
-| 1d8 | 7-8 | Mid damage/effects |
-| 1d10 | 9-10 | Mid-high damage/effects |
-| 1d12 | 11-12 | High damage/effects |
-| 2d6 | 11-12 | High damage/effects |
-| 2d8 | 14-15 | Very high damage/effects |
-| 2d10 | 17-18 | Extreme damage/effects |
-
-**Rule:** Pick the average or slightly below average of the D&D dice range.
+> **When converting from other systems:** `../shared/ANTI_PATTERNS.md`
+> **When validating damage types or conditions:** `../shared/DRAW_STEEL_BASICS.md`
 
 ## Damage Patterns in Draw Steel Rewards
 
@@ -2252,20 +2124,17 @@ These are the most common errors when creating rewards from D&D/PF2e sources. **
 
 ### Dice Notation Mistakes (CRITICAL!)
 
-**Draw Steel NEVER uses dice notation for damage, healing, or effects.**
+**Draw Steel NEVER uses dice notation for damage, healing, or effects.** Calculate values using Draw Steel patterns, not by converting D&D dice.
 
-| D&D Term | Draw Steel Term | Why It's Wrong |
-|----------|-----------------|---------------|
-| "2d4+2 hit points" | "6 stamina" | D&D dice notation, use fixed values |
-| "1d6 fire damage" | "5 fire damage" | D&D dice notation, use fixed values |
-| "1d8 lightning damage" | "7 lightning damage" | D&D dice notation, use fixed values |
-| "2d6 poison damage" | "11 poison damage" | D&D dice notation, use fixed values |
-| "1d12 psychic damage" | "11 psychic damage" | D&D dice notation, use fixed values |
-| "1d20 damage" | "10 damage" | D&D dice notation, use fixed values |
-| "gain 1d4+1 temporary HP" | "gain 3 temporary stamina" | D&D dice notation, use fixed values |
-| "regain 3d8+3 hit points" | "regain 16 stamina" | D&D dice notation, use fixed values |
-| "roll 2d10 for effect" | "fixed effect value" | D&D dice notation, use fixed values |
-| "1d4 rounds" | "2 rounds" | D&D dice notation, use fixed values |
+| ❌ D&D Term (NEVER USE) | Why It's Wrong |
+|------------------------|----------------|
+| "2d4+2 hit points" | D&D dice notation - use fixed values from Draw Steel formulas |
+| "1d6 fire damage" | D&D dice notation - use fixed values from Draw Steel formulas |
+| "1d8 lightning damage" | D&D dice notation - use fixed values from Draw Steel formulas |
+| "2d6 poison damage" | D&D dice notation - use fixed values from Draw Steel formulas |
+| "gain 1d4+1 temporary HP" | D&D dice notation - use fixed values from Draw Steel formulas |
+| "roll 2d10 for effect" | D&D dice notation - use fixed values from Draw Steel formulas |
+| "1d4 rounds" | D&D dice notation - use fixed values from Draw Steel formulas |
 
 **Prohibited Dice Types:**
 - `d4` - NEVER use

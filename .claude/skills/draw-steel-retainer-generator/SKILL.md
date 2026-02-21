@@ -526,30 +526,7 @@ Abilities use blockquote format with icons:
 
 ## Valid Keywords Reference
 
-### Valid Damage Types
-
-- acid, cold, corruption, fire, holy, lightning, poison, psychic, sonic
-
-### Invalid Damage Types (NEVER USE)
-
-- piercing, slashing, bludgeoning, necrotic, radiant, thunder, force, physical
-
-### Valid Conditions
-
-- bleeding, dazed, frightened, grabbed, prone, restrained, slowed, taunted, weakened
-
-### Invalid Conditions (NEVER USE)
-
-- stunned, paralyzed, blinded, deafened, poisoned, charmed, unconscious
-
-### Condition Duration Patterns
-
-| Pattern | Usage |
-|---------|-------|
-| (save ends) | Target can save at end of each turn |
-| (EoT) | Ends at end of target's turn |
-| (EoYT) | Ends at end of your turn |
-| (until end of encounter) | Ends when encounter ends |
+> **When validating damage types or conditions:** `../shared/DRAW_STEEL_BASICS.md`
 
 ### Valid Creature Keywords
 

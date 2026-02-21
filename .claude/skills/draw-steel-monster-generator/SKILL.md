@@ -401,11 +401,7 @@ Add `"charge"` to keywords, include `"effect.after"` with movement text.
 
 ## Valid Damage Types (CRITICAL!)
 
-**ONLY these damage types are valid in Draw Steel Foundry VTT:**
-- `acid`, `cold`, `corruption`, `fire`, `holy`, `lightning`, `poison`, `psychic`, `sonic`
-
-**INVALID damage types (D&D terminology - will crash Foundry):**
-- `physical`, `slashing`, `bludgeoning`, `piercing`, `force`, `necrotic`, `radiant`, `thunder`, `untyped`
+> **When validating damage types or conditions:** `../shared/DRAW_STEEL_BASICS.md`
 
 **For untyped damage:** Use empty array `"types": []`
 
@@ -893,10 +889,9 @@ Monsters with specific keywords (undead, dragon, abyssal, etc.) can access share
 
 ## Valid Conditions (Draw Steel Only)
 
-**ONLY these conditions are valid in Draw Steel:**
-- `bleeding`, `dazed`, `frightened`, `grabbed`, `prone`, `restrained`, `slowed`, `taunted`, `weakened`
+> **When validating conditions:** `../shared/DRAW_STEEL_BASICS.md`
 
-**Condition Duration Rules:**
+**Condition Duration Rules for Monsters:**
 
 | Condition | Type | How It Ends |
 |-----------|------|-------------|

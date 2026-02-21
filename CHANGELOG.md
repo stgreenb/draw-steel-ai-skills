@@ -17,12 +17,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Solo Turns Field:** Explained `turns: 2` gives two initiative slots
 - **Compendium UUID References:** Added examples for cross-referencing in Foundry VTT
 - **Potency Notation Mapping:** Added markdown-to-JSON conversion table
+- **Shared References Directory:** Created `.claude/skills/shared/` for cross-skill reference files
+- **DRAW_STEEL_BASICS.md:** Shared reference for damage types, conditions, characteristics
+- **ANTI_PATTERNS.md:** Shared reference for D&D/PF2e conversion guidance
+- **Forced Movement Rules:** Added push/pull/slide mechanics to shared reference
+- **Edges and Banes:** Added roll modification rules and common sources to shared reference
+- **Condition Fallback:** Added guidance to use edges/banes when no Draw Steel condition matches source material
 
 ### Changed
 - **Repository Renamed:** `draw-steel-monster-generator` → `draw-steel-ai-skills`
 - **README.md:** Updated title to "Draw Steel AI Skills", added Retainer Generator to skills list
 - **project.md:** Updated purpose to reflect multi-skill collection
 - **Characteristic Distribution:** Clarified echelon value is guideline for highest characteristic
+- **Token Optimization:** All 4 skills now use shared references for common content (damage types, conditions)
+- **Dice Conversion Removed:** Removed dice-to-fixed-value conversion tables - source is inspiration only, not math conversion
+
+### Removed
+- **Outdated GitHub Workflows:** Removed test.yml and release.yml (repo is AI skills, not Python package)
+- **Duplicated Content:** Consolidated damage types and conditions into shared references
 
 ## [1.5.0] - 2026-02-05
 

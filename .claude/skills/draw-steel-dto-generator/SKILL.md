@@ -20,9 +20,12 @@ Generate Draw Steel TTRPG Dynamic Terrain Objectives (DTOs) that strictly confor
 - `"Create a Level 2 Environmental Hazard Acidic Bog"`
 - `"Create a Level 1 Fieldwork (Ambusher) Snap Trap"`
 - `"Create a Level 3 Siege Engine Scorpion Ballista"`
-- `"Create a Level 5 Power Fixture Crystal Shrine"`
+- `"Create a Level 5 Power Fixture Crystal Shrine --format foundry"`
+- `"Create a Level 1 Trap Bear Trap --format both"`
 
 **Categories:** Environmental Hazard, Fieldwork, Mechanism, Siege Engine, Power Fixture, Supernatural Object
+
+**Output Formats:** `--format markdown` (default), `--format foundry`, `--format both`
 
 **Roles (secondary tags indicating mechanical pattern):**
 - **Defender:** High Stamina, protects allies (Brambles, Column of Blades)
@@ -550,9 +553,7 @@ Mechanisms (traps, devices) deal less damage than siege engines at the same leve
 
 **ALWAYS specify damage type - NEVER use generic "damage"**
 
-### Valid Damage Types
-
-`acid`, `cold`, `corruption`, `fire`, `holy`, `lightning`, `poison`, `psychic`, `sonic`
+> **When validating damage types or conditions:** `../shared/DRAW_STEEL_BASICS.md`
 
 ### Theme Matching
 
@@ -583,9 +584,7 @@ Power Roll + 2:
 
 ## Conditions
 
-### Valid Conditions
-
-`bleeding`, `dazed`, `frightened`, `grabbed`, `prone`, `restrained`, `slowed`, `taunted`, `weakened`
+> **When validating conditions:** `../shared/DRAW_STEEL_BASICS.md`
 
 ### Condition Durations
 
@@ -939,6 +938,196 @@ Draw Steel DTO:
 > - 12-16: 8 fire damage; A < 1 dazed (EoT)
 > - 17+: 11 fire damage; A < 2 dazed (EoT)
 ```
+
+## Foundry VTT Object Actor JSON Schema
+
+### Output Workflow
+
+**CRITICAL: All formats require internal Foundry JSON generation and validation.**
+
+1. Generate Foundry Object actor JSON internally
+2. Run validation: `python .claude/skills/draw-steel-dto-generator/scripts/validate_dto_json.py output/filename.json`
+3. Convert validated JSON to requested format(s)
+4. Display validation results to user
+5. Return output
+
+### Core Object Actor Structure
+
+```json
+{
+  "name": "Bear Trap",
+  "type": "object",
+  "img": "systems/draw-steel/assets/icons/svg/trap.svg",
+  "system": {
+    "stamina": { "value": 6, "max": 6, "temporary": 0 },
+    "characteristics": {
+      "might": { "value": 0, "banes": 0, "edges": 0 },
+      "agility": { "value": 0, "banes": 0, "edges": 0 },
+      "reason": { "value": 0, "banes": 0, "edges": 0 },
+      "intuition": { "value": 0, "banes": 0, "edges": 0 },
+      "presence": { "value": 0, "banes": 0, "edges": 0 }
+    },
+    "combat": {
+      "save": { "threshold": 6, "bonus": "" },
+      "size": { "value": 1, "letter": "S" },
+      "stability": 0,
+      "turns": 0
+    },
+    "movement": null,
+    "damage": {
+      "immunities": { "all": 0 },
+      "weaknesses": {}
+    },
+    "statuses": { "canFlank": false },
+    "biography": { "value": "", "director": "" },
+    "source": { "book": "Dynamic Terrain", "page": "", "license": "Draw Steel Creator License" },
+    "object": {
+      "level": 1,
+      "category": "trap",
+      "role": "ambusher",
+      "area": null,
+      "squareStamina": false
+    }
+  },
+  "prototypeToken": {
+    "name": "Bear Trap",
+    "displayName": 20,
+    "displayBars": 20,
+    "bar1": { "attribute": "stamina" },
+    "width": 1,
+    "height": 1,
+    "disposition": -1,
+    "texture": { "src": "systems/draw-steel/assets/icons/svg/trap.svg" }
+  },
+  "items": [],
+  "_stats": { "systemId": "draw-steel", "systemVersion": "0.10.0" },
+  "_id": "BearTrapObject001"
+}
+```
+
+### Object Category Mapping
+
+| DTO Category | Object Category |
+|--------------|-----------------|
+| Environmental Hazard | `hazard` |
+| Fieldwork (Trap) | `trap` |
+| Fieldwork (Fortification) | `fortification` |
+| Mechanism (Trap) | `trap` |
+| Mechanism (Trigger) | `trigger` |
+| Mechanism (Fortification) | `fortification` |
+| Siege Engine | `siegeEngine` |
+| Power Fixture | `relic` |
+| Supernatural Object | `relic` |
+
+### Object Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `type` | string | Always `"object"` for DTOs |
+| `system.object.level` | integer | DTO level (1-5 typically) |
+| `system.object.category` | string | One of: `hazard`, `trap`, `trigger`, `siegeEngine`, `relic`, `fortification` |
+| `system.object.role` | string | Same roles as monsters: `ambusher`, `artillery`, `brute`, `controller`, `defender`, `harrier`, `hexer`, `mount`, `support`, or `""` |
+| `system.object.area` | integer/null | Number of squares for multi-square DTOs |
+| `system.object.squareStamina` | boolean | `true` if stamina is per-square |
+| `system.movement` | null/object | `null` for static objects, object with movement for mobile |
+
+### Static vs Mobile Objects
+
+**Static Objects (most DTOs):**
+```json
+"movement": null
+```
+
+**Mobile Objects (e.g., mobile siege engines):**
+```json
+"movement": {
+  "value": 3,
+  "types": ["walk"],
+  "hover": false,
+  "disengage": 0
+}
+```
+
+### Object Stamina Patterns
+
+**Fixed Stamina:**
+```json
+"stamina": { "value": 6, "max": 6, "temporary": 0 },
+"object": {
+  "area": null,
+  "squareStamina": false
+}
+```
+
+**Per-Square Stamina:**
+```json
+"stamina": { "value": 3, "max": 3, "temporary": 0 },
+"object": {
+  "area": 4,
+  "squareStamina": true
+}
+```
+
+**No Stamina (indestructible):**
+```json
+"stamina": { "value": 0, "max": 0, "temporary": 0 },
+"object": {
+  "area": null,
+  "squareStamina": false
+}
+```
+
+### Object Ability Structure
+
+DTO abilities use the same structure as monster abilities:
+
+```json
+{
+  "name": "Bear Trap",
+  "type": "ability",
+  "system": {
+    "type": "freeTriggered",
+    "category": "signature",
+    "keywords": ["melee", "strike", "weapon"],
+    "distance": { "type": "melee", "primary": 0 },
+    "target": { "type": "creatureObject", "value": 1 },
+    "damageDisplay": "melee",
+    "power": {
+      "roll": { "formula": "@chr", "characteristics": ["agility"] },
+      "effects": {
+        "effect001": {
+          "_id": "effect001",
+          "type": "damage",
+          "damage": {
+            "tier1": { "value": "1", "types": [], "properties": [] },
+            "tier2": { "value": "3", "types": [], "properties": [] },
+            "tier3": { "value": "5", "types": [], "properties": [] }
+          }
+        }
+      }
+    },
+    "effect": { "before": "", "after": "<p>The bear trap must be manually reset.</p>" },
+    "spend": { "text": "", "value": null },
+    "source": { "book": "Dynamic Terrain", "license": "Draw Steel Creator License" }
+  },
+  "_id": "BearTrapAbility001"
+}
+```
+
+### Validation Script
+
+Run before outputting with `--format foundry` or `--format both`:
+
+```bash
+python .claude/skills/draw-steel-dto-generator/scripts/validate_dto_json.py output/filename.json
+```
+
+**Output interpretation:**
+- **PASSED (✓):** All checks successful
+- **ERRORS (❌):** Critical issues - fix before importing
+- **WARNINGS (⚠️):** Minor issues - review but acceptable
+
+This is MANDATORY - never skip validation.
 
 ## Published Examples Reference
 
