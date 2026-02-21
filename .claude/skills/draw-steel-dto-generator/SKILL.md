@@ -1001,9 +1001,103 @@ Draw Steel DTO:
   },
   "items": [],
   "_stats": { "systemId": "draw-steel", "systemVersion": "0.10.0" },
-  "_id": "BearTrapObject001"
+  "_id": "I2HA61b5E3GHnHTH"
 }
 ```
+
+## _ID Format (Critical)
+
+All `_id` fields must match `^[a-zA-Z0-9]{16}$` (exactly 16 alphanumeric chars).
+
+**CRITICAL: All IDs must be UNIQUE within the same DTO.** This includes:
+- The actor's `_id`
+- Each item/ability's `_id`
+- Each effect's `_id` inside `system.power.effects`
+
+**⚠️ NEVER reuse the same ID for multiple entities:**
+```json
+// WRONG - same ID used for actor, ability, AND effect:
+"_id": "Feu32e27L0EEvSda"           // Actor
+...
+{
+  "_id": "Feu32e27L0EEvSda",        // Ability - DUPLICATE!
+  "system": { "power": { "effects": {
+    "Feu32e27L0EEvSda": {           // Effect - TRIPLE DUPLICATE!
+      "_id": "Feu32e27L0EEvSda",
+      ...
+    }
+  }}}
+}
+```
+
+**✅ CORRECT - every ID is unique:**
+```json
+{
+  "_id": "I2HA61b5E3GHnHTH",        // Actor ID
+  "items": [
+    {
+      "_id": "XyPJJOU0fiU8VyHl",    // Ability 1 ID (unique)
+      "system": { "power": { "effects": {
+        "le5j4jZ6dJLk4UuE": {       // Effect ID (unique)
+          "_id": "le5j4jZ6dJLk4UuE",
+          ...
+        }
+      }}}
+    },
+    {
+      "_id": "PdL6EvIAV8xSMb3m"     // Ability 2 ID (unique)
+    }
+  ]
+}
+```
+
+**Workflow: Generate ALL IDs upfront, then assign them sequentially.**
+
+```bash
+# Calculate needed IDs:
+# 1 actor + 3 abilities + 5 effects = 9 IDs
+python scripts/generate_foundry_ids.py --count 9
+
+# Assign in order:
+# ID[0] = actor._id
+# ID[1] = items[0]._id
+# ID[2] = items[0].system.power.effects[effect_key]._id
+# ID[3] = items[1]._id
+# ...and so on
+```
+
+**Use the ID generator script to avoid errors:**
+
+```bash
+# Generate 1 ID (for actor)
+python scripts/generate_foundry_ids.py
+
+# Generate 5 IDs (for DTO abilities)
+python scripts/generate_foundry_ids.py --count 5
+```
+
+**Example workflow:**
+```bash
+# 1. Generate IDs for your DTO
+python scripts/generate_foundry_ids.py --count 5
+# Output:
+# aB2c3D4e5F6G7890
+# mK9jn2Lp4Qr6St8u
+# vX1yZ3w5A7b9C0dE
+# fG2hI4j6K8lM0nO2
+# pQ4rS6tU8vW0xY2z
+
+# 2. Use these IDs in your JSON
+"_id": "aB2c3D4e5F6G7890"  # Actor ID
+"_id": "mK9jn2Lp4Qr6St8u"  # Ability 1 ID
+"_id": "vX1yZ3w5A7b9C0dE"  # Ability 2 ID
+```
+
+**Manual generation is error-prone and discouraged.** Common errors:
+- Wrong length (15 or 17 characters instead of 16)
+- Including dashes (UUID format like `a1b2c3d4-e5f6-7890-abcd`)
+- Using placeholder text like "BearTrapObject001"
+- **Generating duplicate IDs within the same DTO ← THIS CAUSES VALIDATION FAILURES**
 
 ### Object Category Mapping
 
@@ -1095,8 +1189,8 @@ DTO abilities use the same structure as monster abilities:
     "power": {
       "roll": { "formula": "@chr", "characteristics": ["agility"] },
       "effects": {
-        "effect001": {
-          "_id": "effect001",
+        "XyPJJOU0fiU8VyHl": {
+          "_id": "XyPJJOU0fiU8VyHl",
           "type": "damage",
           "damage": {
             "tier1": { "value": "1", "types": [], "properties": [] },
@@ -1110,7 +1204,7 @@ DTO abilities use the same structure as monster abilities:
     "spend": { "text": "", "value": null },
     "source": { "book": "Dynamic Terrain", "license": "Draw Steel Creator License" }
   },
-  "_id": "BearTrapAbility001"
+  "_id": "le5j4jZ6dJLk4UuE"
 }
 ```
 

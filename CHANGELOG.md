@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.0] - 2026-02-21
+
+### Added
+- **DTO ID Generator:** Added `generate_foundry_ids.py` to DTO generator scripts for valid 16-character alphanumeric IDs
+- **DTO ID Validation:** `validate_dto_json.py` now validates ID format (must match `^[a-zA-Z0-9]{16}$`)
+- **DTO ID Documentation:** Added `_ID Format (Critical)` section to DTO SKILL.md with workflow examples
+
+### Changed
+- **DTO JSON Examples:** Updated all `_id` fields to use valid 16-character alphanumeric IDs instead of placeholder names like "BearTrapObject001"
+- **Cross-Skill Consistency:** DTO generator now uses same ID generation and validation as monster generator
+
+### Fixed
+- **Foundry Import Failure:** DTOs generated with placeholder IDs (e.g., "SteamPressureVentObject001") now fail validation before export, preventing the "must be a valid 16-character alphanumeric ID" error on import
+
 ## [1.6.0] - 2026-02-21
 
 ### Added
