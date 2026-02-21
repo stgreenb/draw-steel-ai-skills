@@ -71,7 +71,7 @@ This document provides the exact JSON structure required when generating Foundry
     "systemId": "draw-steel",
     "systemVersion": "0.10.0"
   },
-  "_id": "BearTrapObject001"
+  "_id": "aB3cD4eF5gH6iJ7k"
 }
 ```
 
@@ -221,8 +221,8 @@ DTO abilities use the same structure as monster abilities:
     "power": {
       "roll": {"formula": "@chr", "characteristics": ["agility"]},
       "effects": {
-        "effect001": {
-          "_id": "effect001",
+        "aB1cD2eF3gH4iJ5k": {
+          "_id": "aB1cD2eF3gH4iJ5k",
           "type": "damage",
           "damage": {
             "tier1": {"value": "1", "types": [], "properties": []},
@@ -239,7 +239,7 @@ DTO abilities use the same structure as monster abilities:
     "spend": {"text": "", "value": null},
     "source": {"book": "Dynamic Terrain", "license": "Draw Steel Creator License"}
   },
-  "_id": "BearTrapAbility001"
+  "_id": "K9mN2pQ8rS4tU6vW"
 }
 ```
 
@@ -309,7 +309,7 @@ DTO abilities use the same structure as monster abilities:
         "description": {"value": "<p>As a maneuver, a creature adjacent to a bear trap can make an Agility test.</p><ul><li><strong>≤11:</strong> The creature triggers the trap.</li><li><strong>12-16:</strong> The trap is deactivated but the creature is slowed (EoT).</li><li><strong>17+:</strong> The trap is deactivated and doesn't trigger.</li></ul>", "director": ""},
         "source": {"book": "Dynamic Terrain", "license": "Draw Steel Creator License"}
       },
-      "_id": "BearTrapDeactivate001"
+      "_id": "X5yZ7aB2cD8eF4gH"
     },
     {
       "name": "Activate",
@@ -319,7 +319,7 @@ DTO abilities use the same structure as monster abilities:
         "description": {"value": "<p>The bear trap is calibrated to be triggered by creatures or objects of a particular size. The trap triggers when a creature or object of the appropriate size enters its space.</p><p><strong>Effect:</strong> A triggering creature or object ends their movement and is targeted by the Bear Trap ability.</p>", "director": ""},
         "source": {"book": "Dynamic Terrain", "license": "Draw Steel Creator License"}
       },
-      "_id": "BearTrapActivate001"
+            "_id": "Q1wE2rT3yU4iO5pA"
     },
     {
       "name": "Bear Trap",
@@ -334,8 +334,8 @@ DTO abilities use the same structure as monster abilities:
         "power": {
           "roll": {"formula": "@chr", "characteristics": ["agility"]},
           "effects": {
-            "effect001": {
-              "_id": "effect001",
+            "aB1cD2eF3gH4iJ5k": {
+              "_id": "aB1cD2eF3gH4iJ5k",
               "type": "damage",
               "damage": {
                 "tier1": {"value": "1", "types": [], "properties": []},
@@ -343,8 +343,8 @@ DTO abilities use the same structure as monster abilities:
                 "tier3": {"value": "5", "types": [], "properties": []}
               }
             },
-            "effect002": {
-              "_id": "effect002",
+            "lM6nO7pQ8rS9tU0v": {
+              "_id": "lM6nO7pQ8rS9tU0v",
               "type": "applied",
               "applied": {
                 "tier1": {"display": "", "potency": {"value": "@potency.weak", "characteristic": "agility"}},
@@ -358,7 +358,7 @@ DTO abilities use the same structure as monster abilities:
         "spend": {"text": "", "value": null},
         "source": {"book": "Dynamic Terrain", "license": "Draw Steel Creator License"}
       },
-      "_id": "BearTrapAbility001"
+"_id": "K9mN2pQ8rS4tU6vW"
     },
     {
       "name": "Hidden",
@@ -367,11 +367,11 @@ DTO abilities use the same structure as monster abilities:
         "description": {"value": "<p>The bear trap is hidden until triggered or detected.</p>", "director": ""},
         "source": {"book": "Dynamic Terrain", "license": "Draw Steel Creator License"}
       },
-      "_id": "BearTrapHidden001"
+            "_id": "L6kJ7hG8fD9sA2zX"
     }
   ],
   "_stats": {"systemId": "draw-steel", "systemVersion": "0.10.0"},
-  "_id": "BearTrapObject001"
+    "_id": "M3nP4qR5sT6uV7wX"
 }
 ```
 
@@ -433,7 +433,7 @@ DTO abilities use the same structure as monster abilities:
         "description": {"value": "<p>Each square of lava must be individually destroyed.</p>", "director": ""},
         "source": {"book": "Dynamic Terrain", "license": "Draw Steel Creator License"}
       },
-      "_id": "LavaDeactivate001"
+      "_id": "W2xE3yC4zV5bN6mQ"
     },
     {
       "name": "Activate",
@@ -443,7 +443,7 @@ DTO abilities use the same structure as monster abilities:
         "description": {"value": "<p>A creature or object enters the lava or starts their turn there, or starts their turn adjacent to the lava.</p><p><strong>Effect:</strong> The Liquid Hot Magma ability.</p>", "director": ""},
         "source": {"book": "Dynamic Terrain", "license": "Draw Steel Creator License"}
       },
-      "_id": "LavaActivate001"
+      "_id": "K7jH8gF6dS5aZ9xW"
     },
     {
       "name": "Liquid Hot Magma",
@@ -458,8 +458,8 @@ DTO abilities use the same structure as monster abilities:
         "power": {
           "roll": {"formula": "@chr", "characteristics": ["might"]},
           "effects": {
-            "effect001": {
-              "_id": "effect001",
+            "aB1cD2eF3gH4iJ5k": {
+              "_id": "aB1cD2eF3gH4iJ5k",
               "type": "damage",
               "damage": {
                 "tier1": {"value": "5", "types": ["fire"], "properties": []},
@@ -467,8 +467,8 @@ DTO abilities use the same structure as monster abilities:
                 "tier3": {"value": "12", "types": ["fire"], "properties": []}
               }
             },
-            "effect002": {
-              "_id": "effect002",
+            "lM6nO7pQ8rS9tU0v": {
+              "_id": "lM6nO7pQ8rS9tU0v",
               "type": "applied",
               "applied": {
                 "tier1": {"display": "{{potency}} burning (save ends)", "potency": {"value": "-1", "characteristic": "might"}},
@@ -482,11 +482,11 @@ DTO abilities use the same structure as monster abilities:
         "spend": {"text": "", "value": null},
         "source": {"book": "Dynamic Terrain", "license": "Draw Steel Creator License"}
       },
-      "_id": "LavaAbility001"
+      "_id": "P1oI2uY3tR4eW5qA"
     }
   ],
   "_stats": {"systemId": "draw-steel", "systemVersion": "0.10.0"},
-  "_id": "LavaObject001"
+  "_id": "S6dF7gH8jK3lZ9xC"
 }
 ```
 
@@ -550,8 +550,8 @@ DTO abilities use the same structure as monster abilities:
         "power": {
           "roll": {"formula": "@chr", "characteristics": ["agility"]},
           "effects": {
-            "effect001": {
-              "_id": "effect001",
+            "aB1cD2eF3gH4iJ5k": {
+              "_id": "aB1cD2eF3gH4iJ5k",
               "type": "damage",
               "damage": {
                 "tier1": {"value": "5", "types": [], "properties": []},
@@ -565,7 +565,7 @@ DTO abilities use the same structure as monster abilities:
         "spend": {"text": "", "value": null},
         "source": {"book": "Dynamic Terrain", "license": "Draw Steel Creator License"}
       },
-      "_id": "ArrowStormAbility001"
+      "_id": "N4bV5cX6zL7kM8pQ"
     },
     {
       "name": "Reload",
@@ -582,7 +582,7 @@ DTO abilities use the same structure as monster abilities:
         "spend": {"text": "", "value": null},
         "source": {"book": "Dynamic Terrain", "license": "Draw Steel Creator License"}
       },
-      "_id": "ReloadAbility001"
+      "_id": "J9hG6fD4sA3zX2wE"
     },
     {
       "name": "Spot",
@@ -599,7 +599,7 @@ DTO abilities use the same structure as monster abilities:
         "spend": {"text": "", "value": null},
         "source": {"book": "Dynamic Terrain", "license": "Draw Steel Creator License"}
       },
-      "_id": "SpotAbility001"
+      "_id": "T5yU8iO1pA4sD7fG"
     },
     {
       "name": "Move",
@@ -616,11 +616,11 @@ DTO abilities use the same structure as monster abilities:
         "spend": {"text": "", "value": null},
         "source": {"book": "Dynamic Terrain", "license": "Draw Steel Creator License"}
       },
-      "_id": "MoveAbility001"
+      "_id": "H2jK5lZ9xC3vB6nM"
     }
   ],
   "_stats": {"systemId": "draw-steel", "systemVersion": "0.10.0"},
-  "_id": "ArrowLauncherObject001"
+  "_id": "Q8wE7rT6yU5iO4pA"
 }
 ```
 
