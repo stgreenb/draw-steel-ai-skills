@@ -11,13 +11,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **DTO ID Generator:** Added `generate_foundry_ids.py` to DTO generator scripts for valid 16-character alphanumeric IDs
 - **DTO ID Validation:** `validate_dto_json.py` now validates ID format (must match `^[a-zA-Z0-9]{16}$`)
 - **DTO ID Documentation:** Added `_ID Format (Critical)` section to DTO SKILL.md with workflow examples
+- **DTO Image Path Validation:** `validate_dto_json.py` now validates image paths (detects invalid `icons/svg` paths)
 
 ### Changed
 - **DTO JSON Examples:** Updated all `_id` fields to use valid 16-character alphanumeric IDs instead of placeholder names like "BearTrapObject001"
+- **DTO Image Paths:** Updated all examples to use role-based images from `assets/roles/` (e.g., `ambusher.webp`) instead of non-existent `icons/svg/` paths
 - **Cross-Skill Consistency:** DTO generator now uses same ID generation and validation as monster generator
 
 ### Fixed
 - **Foundry Import Failure:** DTOs generated with placeholder IDs (e.g., "SteamPressureVentObject001") now fail validation before export, preventing the "must be a valid 16-character alphanumeric ID" error on import
+- **404 Image Errors:** DTOs generated with invalid image paths (e.g., `fortification.svg`) now fail validation, preventing 404 errors in Foundry VTT
 
 ## [1.6.0] - 2026-02-21
 

@@ -957,7 +957,7 @@ Draw Steel DTO:
 {
   "name": "Bear Trap",
   "type": "object",
-  "img": "systems/draw-steel/assets/icons/svg/trap.svg",
+  "img": "systems/draw-steel/assets/roles/ambusher.webp",
   "system": {
     "stamina": { "value": 6, "max": 6, "temporary": 0 },
     "characteristics": {
@@ -997,7 +997,7 @@ Draw Steel DTO:
     "width": 1,
     "height": 1,
     "disposition": -1,
-    "texture": { "src": "systems/draw-steel/assets/icons/svg/trap.svg" }
+    "texture": { "src": "systems/draw-steel/assets/roles/ambusher.webp" }
   },
   "items": [],
   "_stats": { "systemId": "draw-steel", "systemVersion": "0.10.0" },
@@ -1112,6 +1112,36 @@ python scripts/generate_foundry_ids.py --count 5
 | Siege Engine | `siegeEngine` |
 | Power Fixture | `relic` |
 | Supernatural Object | `relic` |
+
+### Object Image Paths
+
+**CRITICAL: Use role-based images, NOT category-specific paths.**
+
+The Draw Steel system does NOT have category-specific icons (no `trap.svg`, `hazard.svg`, etc.). Use the role images from `assets/roles/`:
+
+| DTO Role | Image Path |
+|----------|------------|
+| ambusher | `systems/draw-steel/assets/roles/ambusher.webp` |
+| artillery | `systems/draw-steel/assets/roles/artillery.webp` |
+| brute | `systems/draw-steel/assets/roles/brute.webp` |
+| controller | `systems/draw-steel/assets/roles/controller.webp` |
+| defender | `systems/draw-steel/assets/roles/defender.webp` |
+| harrier | `systems/draw-steel/assets/roles/harrier.webp` |
+| hexer | `systems/draw-steel/assets/roles/hexer.webp` |
+| support | `systems/draw-steel/assets/roles/support.webp` |
+| no role | `systems/draw-steel/assets/roles/minion.webp` |
+
+**For DTOs without a role**, use `minion.webp` as a fallback.
+
+```
+❌ WRONG - These paths do NOT exist:
+"img": "systems/draw-steel/assets/icons/svg/trap.svg"
+"img": "systems/draw-steel/assets/icons/svg/hazard.svg"
+"img": "systems/draw-steel/assets/icons/svg/fortification.svg"
+
+✓ CORRECT - Use role-based images:
+"img": "systems/draw-steel/assets/roles/ambusher.webp"
+```
 
 ### Object Fields
 

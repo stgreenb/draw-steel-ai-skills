@@ -99,6 +99,21 @@ VALID_DAMAGE_TYPES = {
     "sonic",
 }
 
+VALID_ROLE_IMAGES = {
+    "ambusher",
+    "artillery",
+    "brute",
+    "controller",
+    "defender",
+    "harrier",
+    "hexer",
+    "leader",
+    "minion",
+    "mount",
+    "solo",
+    "support",
+}
+
 
 class ValidationResult:
     def __init__(self):
@@ -418,6 +433,31 @@ def validate_can_flank(data: dict, result: ValidationResult) -> None:
             )
 
 
+def validate_image_path(data: dict, result: ValidationResult) -> None:
+    """Validate that image paths use valid role-based images."""
+    img = data.get("img", "")
+
+    if not img:
+        result.add_warning("Missing img field - actor will use default image")
+        return
+
+    if "icons/svg" in img:
+        result.add_error(
+            f"Invalid image path '{img}'. The icons/svg folder does not exist. "
+            f"Use role-based images from assets/roles/ (e.g., 'systems/draw-steel/assets/roles/ambusher.webp')"
+        )
+        return
+
+    if "assets/roles/" in img:
+        role_match = re.search(r"assets/roles/(\w+)\.webp", img)
+        if role_match:
+            role = role_match.group(1)
+            if role not in VALID_ROLE_IMAGES:
+                result.add_warning(
+                    f"Image uses unknown role '{role}'. Valid roles: {', '.join(sorted(VALID_ROLE_IMAGES))}"
+                )
+
+
 def validate_json_file(filepath: str) -> ValidationResult:
     result = ValidationResult()
 
@@ -439,6 +479,7 @@ def validate_json_file(filepath: str) -> ValidationResult:
     validate_characteristics(data, result)
     validate_movement(data, result)
     validate_can_flank(data, result)
+    validate_image_path(data, result)
     validate_square_stamina(data, result)
     validate_id_format(data, result)
     validate_duplicate_ids(data, result)
