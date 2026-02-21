@@ -458,6 +458,37 @@ def validate_image_path(data: dict, result: ValidationResult) -> None:
                 )
 
 
+def validate_immunities(data: dict, result: ValidationResult) -> None:
+    """Validate damage immunities and weaknesses use numeric values, not booleans."""
+    system = data.get("system", {})
+    damage = system.get("damage", {})
+
+    if not damage:
+        return
+
+    immunities = damage.get("immunities", {})
+    weaknesses = damage.get("weaknesses", {})
+
+    for field_name, field_value in [
+        ("immunities", immunities),
+        ("weaknesses", weaknesses),
+    ]:
+        if not isinstance(field_value, dict):
+            continue
+
+        for damage_type, value in field_value.items():
+            if isinstance(value, bool):
+                result.add_error(
+                    f"system.damage.{field_name}.{damage_type} uses boolean '{value}'. "
+                    f"Must be numeric: 0=no effect, level=reduction, 1000=total immunity"
+                )
+            elif not isinstance(value, (int, float)):
+                result.add_error(
+                    f"system.damage.{field_name}.{damage_type} has invalid type '{type(value).__name__}'. "
+                    f"Must be numeric (integer)"
+                )
+
+
 def validate_json_file(filepath: str) -> ValidationResult:
     result = ValidationResult()
 
@@ -480,6 +511,7 @@ def validate_json_file(filepath: str) -> ValidationResult:
     validate_movement(data, result)
     validate_can_flank(data, result)
     validate_image_path(data, result)
+    validate_immunities(data, result)
     validate_square_stamina(data, result)
     validate_id_format(data, result)
     validate_duplicate_ids(data, result)

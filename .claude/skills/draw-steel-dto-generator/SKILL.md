@@ -1201,6 +1201,76 @@ The Draw Steel system does NOT have category-specific icons (no `trap.svg`, `haz
 }
 ```
 
+### Damage Immunities & Weaknesses
+
+```json
+"damage": {
+  "immunities": {
+    "all": 0,
+    "poison": 0,
+    "acid": 0,
+    "cold": 0,
+    "corruption": 0,
+    "fire": 0,
+    "holy": 0,
+    "lightning": 0,
+    "psychic": 0,
+    "sonic": 0
+  },
+  "weaknesses": { "all": 0, "cold": 5 }
+}
+```
+
+#### Numeric Values Explained
+
+**Official Rule:** "Damage immunity often has a value associated with it... Whenever a target with damage immunity takes damage of the indicated type, they can reduce the damage by the value of the immunity (to a minimum of 0 damage)."
+
+**Immunities:**
+- **0** = No immunity (takes full damage from this type)
+- **Numeric value** = Reduces damage by that amount (e.g., `"poison": 7` reduces poison damage by 7)
+- **1000** = Total immunity (Foundry VTT pattern for complete immunity)
+- For DTOs, set value to DTO's level or a thematic amount
+
+**Example:** A DTO with `"fire": 5` takes 10 fire damage → reduced to 5 damage. If it takes 4 fire damage → reduced to 0.
+
+**Total Immunity:** Use `"psychic": 1000` (or similar high value) for complete immunity. This is appropriate for inanimate objects that cannot be affected by certain damage types at all.
+
+**Weaknesses:**
+- **0** = No weakness to this damage type
+- **Numeric value** = Extra damage dealt TO the DTO when hit with this type
+
+**Example:** `"cold": 5` means cold attacks deal +5 damage against this DTO.
+
+**CRITICAL: Always use numeric values, NOT booleans:**
+
+```
+❌ WRONG - Boolean values:
+"immunities": {"poison": true, "psychic": true}
+
+✓ CORRECT - Numeric values:
+"immunities": {"poison": 1000, "psychic": 1000}  // Total immunity
+"immunities": {"poison": 3, "psychic": 3}        // Partial reduction (level-based)
+```
+
+#### Immunity Patterns by DTO Type
+
+| DTO Type | Common Immunities | Typical Value |
+|----------|-------------------|---------------|
+| **Inanimate Objects** | poison, psychic | 1000 (total immunity) |
+| **Constructs/Mechanisms** | poison, psychic, corruption | 1000 (total immunity) |
+| **Elemental Hazards** | their element | Level or 1000 |
+| **Durable Objects** | physical types | Level-based |
+
+**Example - Steam Pressure Vent (construct):**
+```json
+"immunities": {
+  "all": 0,
+  "poison": 1000,
+  "psychic": 1000,
+  "corruption": 1000
+}
+```
+
 ### Object Ability Structure
 
 DTO abilities use the same structure as monster abilities:
