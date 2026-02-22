@@ -71,6 +71,7 @@ VALID_CHARACTERISTICS = {"reason", "intuition", "agility", "might", "presence"}
 # Valid damage types (for effects)
 VALID_DAMAGE_TYPES = {
     "acid",
+    "all",  # Used for immunity to all damage
     "cold",
     "corruption",
     "fire",
@@ -556,6 +557,13 @@ def validate_duplicate_ids(data: dict, result: ValidationResult) -> None:
                 )
 
 
+def _ordinal(level: int) -> str:
+    """Return ordinal suffix for a number (1st, 2nd, 3rd, etc.)."""
+    if 10 <= level % 100 <= 20:
+        return f"{level}th"
+    return f"{level}{'st' if level % 10 == 1 else 'nd' if level % 10 == 2 else 'rd' if level % 10 == 3 else 'th'}"
+
+
 def validate_leveled_scaling(data: dict, result: ValidationResult) -> None:
     """Validate leveled treasure scaling patterns (1st, 5th, 9th level)."""
     if data.get("type") != "treasure":
@@ -572,22 +580,10 @@ def validate_leveled_scaling(data: dict, result: ValidationResult) -> None:
     keywords = set(k.lower() for k in system.get("keywords", []))
 
     # Check for equipment type
-    is_weapon = any(
-        kw in keywords
-        for kw in [
-            "light weapon",
-            "medium weapon",
-            "heavy weapon",
-            "bow",
-            "polearm",
-            "spear",
-        ]
-    )
-    is_armor = any(
-        kw in keywords for kw in ["light armor", "medium armor", "heavy armor"]
-    )
+    is_weapon = bool(keywords & VALID_WEAPON_KEYWORDS)
+    is_armor = bool(keywords & VALID_ARMOR_KEYWORDS)
     is_shield = "shield" in keywords
-    is_implement = "implement" in keywords
+    is_implement = bool(keywords & VALID_IMPLEMENT_KEYWORDS)
 
     # Collect damage and stamina values by level
     damage_by_level = {}
@@ -599,9 +595,9 @@ def validate_leveled_scaling(data: dict, result: ValidationResult) -> None:
         changes = effect.get("changes", [])
 
         # Parse level from effect name
-        level_match = re.search(
-            r"\((\d+)(?:st|nd|rd|th) level\)", effect_name, re.IGNORECASE
-        )
+        # Matches: "(1st level)", "(5th level)", "(9th level)" - official format
+        # Also matches: "1st Level", "5th Level" - for flexibility
+        level_match = re.search(r"\(?(\d+)(?:st|nd|rd|th)\s*[Ll]evel\)?", effect_name)
         if not level_match:
             continue
 
@@ -613,6 +609,8 @@ def validate_leveled_scaling(data: dict, result: ValidationResult) -> None:
                 key = change.get("key", "")
                 value = change.get("value", "")
                 if "damage.tier" in key and effect_type == "abilityModifier":
+                    damage_by_level[level] = value
+                elif "damage.bonuses.treasure" in key:
                     damage_by_level[level] = value
 
         # Check for stamina bonuses (armor/shields)
@@ -630,11 +628,11 @@ def validate_leveled_scaling(data: dict, result: ValidationResult) -> None:
             actual = damage_by_level.get(level)
             if actual is None:
                 result.add_warning(
-                    f"Leveled treasure missing {level}st/nd/rd/th level damage effect."
+                    f"Leveled treasure missing {_ordinal(level)} level damage effect."
                 )
             elif actual != expected:
                 result.add_warning(
-                    f"Leveled treasure damage at {level}st/nd/rd/th level is {actual}, expected {expected}. "
+                    f"Leveled treasure damage at {_ordinal(level)} level is {actual}, expected {expected}. "
                     f"Standard scaling: +1/+2/+3."
                 )
 
@@ -645,11 +643,11 @@ def validate_leveled_scaling(data: dict, result: ValidationResult) -> None:
             actual = stamina_by_level.get(level)
             if actual is None:
                 result.add_warning(
-                    f"Leveled treasure missing {level}st/nd/rd/th level stamina effect."
+                    f"Leveled treasure missing {_ordinal(level)} level stamina effect."
                 )
             elif actual != expected:
                 result.add_warning(
-                    f"Leveled treasure stamina at {level}st/nd/rd/th level is {actual}, expected {expected}. "
+                    f"Leveled treasure stamina at {_ordinal(level)} level is {actual}, expected {expected}. "
                     f"Standard armor scaling: +6/+12/+21."
                 )
 
