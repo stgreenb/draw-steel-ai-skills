@@ -31,6 +31,7 @@ VALID_CONDITIONS = {
     "prone",
     "restrained",
     "slowed",
+    "surprised",
     "taunted",
     "weakened",
 }

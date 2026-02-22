@@ -1325,16 +1325,16 @@ DTOs can be immune to conditions via `system.statuses.immunities`:
 
 ```json
 "statuses": {
-  "immunities": ["dazed", "frightened", "grabbed", "panicked", "prone", "restrained", "slowed", "weakened"]
+  "immunities": ["dazed", "frightened", "grabbed", "prone", "restrained", "slowed", "weakened"]
 }
 ```
 
-**Valid conditions:** bleeding, dazed, frightened, grabbed, panicked, prone, restrained, slowed, weakened
+**Valid conditions:** bleeding, dazed, frightened, grabbed, prone, restrained, slowed, surprised, taunted, weakened
 
 **All Conditions Immunity:**
 ```json
 "statuses": {
-  "immunities": ["bleeding", "dazed", "frightened", "grabbed", "panicked", "prone", "restrained", "slowed", "weakened"]
+  "immunities": ["bleeding", "dazed", "frightened", "grabbed", "prone", "restrained", "slowed", "surprised", "taunted", "weakened"]
 }
 ```
 

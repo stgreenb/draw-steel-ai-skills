@@ -26,23 +26,20 @@ Common rules and terminology for all Draw Steel content generation.
 ## Valid Conditions (Draw Steel Only)
 
 **ONLY these conditions are valid in Draw Steel:**
-- `bleeding`, `dazed`, `frightened`, `grabbed`, `prone`, `restrained`, `slowed`, `taunted`, `weakened`
-
-**Additional conditions found in Draw Steel source:**
-- `panicked` - Similar to frightened but stronger
+- `bleeding`, `dazed`, `frightened`, `grabbed`, `prone`, `restrained`, `slowed`, `surprised`, `taunted`, `weakened`
 
 ### Condition Immunities (Foundry JSON)
 
 ```json
 "statuses": {
-  "immunities": ["dazed", "frightened", "grabbed", "panicked", "prone", "restrained", "slowed", "weakened"]
+  "immunities": ["dazed", "frightened", "grabbed", "prone", "restrained", "slowed", "weakened"]
 }
 ```
 
 **All Conditions Immunity** - List all conditions in the array:
 ```json
 "statuses": {
-  "immunities": ["bleeding", "dazed", "frightened", "grabbed", "panicked", "prone", "restrained", "slowed", "weakened"]
+  "immunities": ["bleeding", "dazed", "frightened", "grabbed", "prone", "restrained", "slowed", "surprised", "taunted", "weakened"]
 }
 ```
 
