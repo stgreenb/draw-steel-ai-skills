@@ -379,11 +379,11 @@ Wearable items with passive effects and optional triggered abilities. Include bo
 Equipment that scales with hero level (1st, 5th, 9th). Includes weapons, armor, shields, implements, rings, and other wearable items.
 
 **CRITICAL: Body Keywords for Leveled Treasures**
-All leveled treasures require a body keyword indicating where they're worn:
-- **Implements:** Always use `"hands"` keyword
+Body keywords indicate where items are worn on the body:
 - **Weapons:** Use `"hands"` keyword (wielded in hands)
 - **Armor:** No body keyword needed (covers body)
 - **Shields:** Use `"hands"` keyword (worn on arm/hand)
+- **Implements:** NO body keyword needed - only `magic`/`psionic` + `implement`
 - **Rings:** Use `"ring"` keyword
 
 ### Titles
@@ -1950,8 +1950,10 @@ This is MANDATORY - never skip validation.
 - [ ] Category is "leveled"
 - [ ] Echelon is 1-4
 - [ ] Project goal is 450
-- [ ] Equipment keyword present (weapon, armor categories, implement types)
-- [ ] **Implements must have "hands" body keyword**
+- [ ] Equipment keyword present (weapon, armor, implement types)
+- [ ] Weapons have "hands" body keyword
+- [ ] Rings have "ring" body keyword
+- [ ] **Implements do NOT need body keywords** (only magic/psionic + implement)
 - [ ] Scaling follows published patterns (damage: +1/+2/+3, stamina: +6/+12/+21)
 - [ ] Effects array has separate effects for 1st, 5th, 9th level
 - [ ] Effect names use format: `[Name] (1st level)`, `[Name] (5th level)`, `[Name] (9th level)`

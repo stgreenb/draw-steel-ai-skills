@@ -251,9 +251,10 @@ def validate_creation_keywords(data: dict, result: ValidationResult) -> None:
 
 def validate_body_keyword(data: dict, result: ValidationResult) -> None:
     """
-    Validate that trinkets and leveled treasures have a body keyword.
+    Validate that trinkets and leveled treasures (except implements) have a body keyword.
 
     Wearable treasures should have body keywords (Arms, Feet, Hands, Head, Neck, Waist, Ring).
+    Implements are an exception - they do NOT need body keywords.
     """
     if data.get("type") != "treasure":
         return
@@ -264,6 +265,10 @@ def validate_body_keyword(data: dict, result: ValidationResult) -> None:
 
     # Only check trinkets and leveled treasures
     if category not in ("trinket", "leveled"):
+        return
+
+    # Implements do NOT need body keywords
+    if "implement" in keywords:
         return
 
     # Check if treasure has at least one body keyword
