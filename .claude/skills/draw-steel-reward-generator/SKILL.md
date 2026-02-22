@@ -378,13 +378,18 @@ Wearable items with passive effects and optional triggered abilities. Include bo
 ### Leveled Treasures
 Equipment that scales with hero level (1st, 5th, 9th). Includes weapons, armor, shields, implements, rings, and other wearable items.
 
-**CRITICAL: Body Keywords for Leveled Treasures**
-Body keywords indicate where items are worn on the body:
-- **Weapons:** Use `"hands"` keyword (wielded in hands)
-- **Armor:** No body keyword needed (covers body)
-- **Shields:** Use `"hands"` keyword (worn on arm/hand)
-- **Implements:** NO body keyword needed - only `magic`/`psionic` + `implement`
-- **Rings:** Use `"ring"` keyword
+**CRITICAL: Keywords by Kind (from Draw Steel source code)**
+
+| kind | Keyword Source | Examples |
+|------|----------------|----------|
+| `weapon` | `equipment.weapon` | bow, light, heavy, medium, polearm |
+| `armor` | `equipment.armor` | light, medium, heavy, shield |
+| `implement` | `equipment.implement` | implement, orb, wand |
+| `other` | `equipment.other` (body slots) | arms, feet, hands, head, neck, waist, ring |
+
+**Body keywords are ONLY needed for:**
+- **Trinkets** (always)
+- **Leveled treasures with `kind: "other"`** (rings, cloaks, etc.)
 
 ### Titles
 Accomplishments heroes can earn. Each title has prerequisites and 3-4 benefit options (or single benefit for individual titles).
@@ -1950,10 +1955,9 @@ This is MANDATORY - never skip validation.
 - [ ] Category is "leveled"
 - [ ] Echelon is 1-4
 - [ ] Project goal is 450
-- [ ] Equipment keyword present (weapon, armor, implement types)
-- [ ] Weapons have "hands" body keyword
-- [ ] Rings have "ring" body keyword
-- [ ] **Implements do NOT need body keywords** (only magic/psionic + implement)
+- [ ] `kind` field is set: `"weapon"`, `"armor"`, `"implement"`, or `"other"`
+- [ ] Keywords match kind (weapon types, armor types, implement types, or body slots)
+- [ ] **Only `kind: "other"` needs body keywords** (arms, feet, hands, head, neck, waist, ring)
 - [ ] Scaling follows published patterns (damage: +1/+2/+3, stamina: +6/+12/+21)
 - [ ] Effects array has separate effects for 1st, 5th, 9th level
 - [ ] Effect names use format: `[Name] (1st level)`, `[Name] (5th level)`, `[Name] (9th level)`

@@ -17,6 +17,21 @@ VALID_TREASURE_CATEGORIES = {"consumable", "trinket", "leveled", "artifact"}
 # Valid treasure kinds (for leveled treasures and artifacts)
 VALID_TREASURE_KINDS = {"", "other", "armor", "implement", "weapon"}
 
+# Valid keywords by kind (from equipment config)
+VALID_WEAPON_KEYWORDS = {
+    "bow",
+    "ensnaring",
+    "heavy",
+    "light",
+    "medium",
+    "polearm",
+    "unarmed",
+    "whip",
+}
+VALID_ARMOR_KEYWORDS = {"light", "medium", "heavy", "shield"}
+VALID_IMPLEMENT_KEYWORDS = {"implement", "orb", "wand"}
+# VALID_BODY_KEYWORDS already defined above
+
 # Valid treasure creation keywords (every treasure must have one or both)
 VALID_CREATION_KEYWORDS = {"magic", "psionic"}
 
@@ -29,26 +44,6 @@ VALID_BODY_KEYWORDS = {
     "neck",
     "waist",
     "ring",
-}
-
-# Valid equipment keywords (for leveled treasures)
-VALID_EQUIPMENT_KEYWORDS = {
-    # Weapon categories
-    "light weapon",
-    "medium weapon",
-    "heavy weapon",
-    "bow",
-    "polearm",
-    "spear",
-    # Armor categories
-    "light armor",
-    "medium armor",
-    "heavy armor",
-    "shield",
-    # Implement types
-    "implement",
-    "orb",
-    "wand",
 }
 
 # Valid project sources (regions)
@@ -251,24 +246,30 @@ def validate_creation_keywords(data: dict, result: ValidationResult) -> None:
 
 def validate_body_keyword(data: dict, result: ValidationResult) -> None:
     """
-    Validate that trinkets and leveled treasures (except implements) have a body keyword.
+    Validate that trinkets and leveled treasures with kind='other' have a body keyword.
 
-    Wearable treasures should have body keywords (Arms, Feet, Hands, Head, Neck, Waist, Ring).
-    Implements are an exception - they do NOT need body keywords.
+    Body keywords come from equipment.other config: arms, feet, hands, head, neck, waist, ring.
+    - Trinkets always need body keywords
+    - Leveled treasures with kind='other' need body keywords
+    - Leveled weapons/armor/implements do NOT need body keywords (they have their own keyword types)
     """
     if data.get("type") != "treasure":
         return
 
     system = data.get("system", {})
     category = system.get("category")
+    kind = system.get("kind", "")
     keywords = set(k.lower() for k in system.get("keywords", []))
 
-    # Only check trinkets and leveled treasures
-    if category not in ("trinket", "leveled"):
-        return
+    # Determine if body keyword is needed
+    needs_body_keyword = False
 
-    # Implements do NOT need body keywords
-    if "implement" in keywords:
+    if category == "trinket":
+        needs_body_keyword = True
+    elif category == "leveled" and kind == "other":
+        needs_body_keyword = True
+
+    if not needs_body_keyword:
         return
 
     # Check if treasure has at least one body keyword
@@ -276,38 +277,65 @@ def validate_body_keyword(data: dict, result: ValidationResult) -> None:
 
     if not has_body_keyword:
         result.add_error(
-            f"{category.capitalize()} treasure must have at least one body keyword. "
+            f"{category.capitalize()} treasure"
+            + (f" with kind='other'" if kind == "other" else "")
+            + f" must have at least one body keyword. "
             f"Valid body keywords: {', '.join(sorted(VALID_BODY_KEYWORDS))}. "
             f"Found keywords: {', '.join(sorted(keywords)) if keywords else 'none'}."
         )
 
 
-def validate_equipment_keyword(data: dict, result: ValidationResult) -> None:
+def validate_kind_keywords(data: dict, result: ValidationResult) -> None:
     """
-    Validate that leveled treasures have an equipment keyword.
+    Validate that leveled treasures have appropriate keywords for their kind.
 
-    Leveled treasures should have equipment keywords (weapon categories, armor categories, implement types).
+    From Draw Steel source code:
+    - kind='weapon' → keywords from equipment.weapon (bow, light, heavy, etc.)
+    - kind='armor' → keywords from equipment.armor (light, medium, heavy, shield)
+    - kind='implement' → keywords from equipment.implement (implement, orb, wand)
+    - kind='other' → keywords from equipment.other (body slots: arms, feet, hands, etc.)
     """
     if data.get("type") != "treasure":
         return
 
     system = data.get("system", {})
     category = system.get("category")
+    kind = system.get("kind", "")
     keywords = set(k.lower() for k in system.get("keywords", []))
 
-    # Only check leveled treasures
-    if category != "leveled":
+    # Only check leveled treasures and artifacts
+    if category not in ("leveled", "artifact"):
         return
 
-    # Check if treasure has at least one equipment keyword
-    has_equipment_keyword = bool(keywords & VALID_EQUIPMENT_KEYWORDS)
+    # Remove creation keywords (magic/psionic) to check equipment keywords
+    equipment_keywords = keywords - VALID_CREATION_KEYWORDS
 
-    if not has_equipment_keyword:
-        result.add_warning(
-            f"Leveled treasure should have an equipment keyword. "
-            f"Valid equipment keywords: {', '.join(sorted(VALID_EQUIPMENT_KEYWORDS))}. "
-            f"Found keywords: {', '.join(sorted(keywords)) if keywords else 'none'}."
-        )
+    # Check kind-specific keywords
+    if kind == "weapon":
+        has_weapon_keyword = bool(equipment_keywords & VALID_WEAPON_KEYWORDS)
+        if not has_weapon_keyword:
+            result.add_warning(
+                f"Leveled treasure with kind='weapon' should have a weapon keyword. "
+                f"Valid: {', '.join(sorted(VALID_WEAPON_KEYWORDS))}. "
+                f"Found: {', '.join(sorted(equipment_keywords)) if equipment_keywords else 'none'}."
+            )
+    elif kind == "armor":
+        has_armor_keyword = bool(equipment_keywords & VALID_ARMOR_KEYWORDS)
+        if not has_armor_keyword:
+            result.add_warning(
+                f"Leveled treasure with kind='armor' should have an armor keyword. "
+                f"Valid: {', '.join(sorted(VALID_ARMOR_KEYWORDS))}. "
+                f"Found: {', '.join(sorted(equipment_keywords)) if equipment_keywords else 'none'}."
+            )
+    elif kind == "implement":
+        has_implement_keyword = bool(equipment_keywords & VALID_IMPLEMENT_KEYWORDS)
+        if not has_implement_keyword:
+            result.add_warning(
+                f"Leveled treasure with kind='implement' should have an implement keyword. "
+                f"Valid: {', '.join(sorted(VALID_IMPLEMENT_KEYWORDS))}. "
+                f"Found: {', '.join(sorted(equipment_keywords)) if equipment_keywords else 'none'}."
+            )
+    # kind='other' is handled by validate_body_keyword
 
 
 def validate_project_goal(data: dict, result: ValidationResult) -> None:
@@ -885,7 +913,7 @@ def validate_json_file(filepath: str) -> ValidationResult:
     validate_keywords_lowercase(data, result)
     validate_creation_keywords(data, result)
     validate_body_keyword(data, result)
-    validate_equipment_keyword(data, result)
+    validate_kind_keywords(data, result)
     validate_project_goal(data, result)
     validate_project_source(data, result)
     validate_roll_characteristics(data, result)
