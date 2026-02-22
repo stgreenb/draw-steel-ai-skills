@@ -1208,6 +1208,31 @@ Some treasures have enhanced yield for specific ancestries/backgrounds:
 
 ## Foundry VTT JSON Structure
 
+### Image Paths (CRITICAL)
+
+**Use Foundry's core icon paths** - NOT Draw Steel-specific paths:
+
+```json
+// ✓ CORRECT - Foundry core icons (these always work)
+"img": "icons/equipment/finger/ring-band-thin-silver-teal.webp"
+"img": "icons/magic/light/explosion-star-large-blue-yellow.webp"
+"img": "icons/weapons/ammunition/arrowhead-glowing-blue.webp"
+"img": "icons/commodities/gems/gem-cut-faceted-red.webp"
+
+// ❌ WRONG - These paths do NOT exist
+"img": "systems/draw-steel/assets/icons/treasures/implement.webp"
+"img": "systems/draw-steel/assets/icons/svg/hazard.svg"
+```
+
+**Image path patterns by treasure type:**
+| Treasure Type | Icon Folder | Example |
+|---------------|-------------|---------|
+| Implements | `icons/equipment/finger/`, `icons/magic/` | `ring-band-thin-silver-teal.webp` |
+| Weapons | `icons/weapons/` | `sword-great-steel.webp` |
+| Armor | `icons/equipment/chest/` | `breastplate-scale-steel.webp` |
+| Consumables | `icons/consumables/` | `potion-bottle-corked.webp` |
+| Trinkets | `icons/equipment/neck/`, `icons/equipment/wrist/` | `amulet-heart.webp` |
+
 ### Effect System
 
 **Effects Array Structure:**

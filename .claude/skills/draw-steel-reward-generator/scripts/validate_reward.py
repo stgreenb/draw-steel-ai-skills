@@ -886,6 +886,45 @@ def validate_characteristic_bonuses(data: dict, result: ValidationResult) -> Non
             )
 
 
+def validate_image_path(data: dict, result: ValidationResult) -> None:
+    """
+    Validate that image paths use valid Foundry core icons.
+
+    Official Draw Steel treasures use Foundry's core icon paths (icons/...)
+    NOT Draw Steel-specific paths (systems/draw-steel/assets/icons/...)
+    """
+    reward_name = data.get("name", "Unknown")
+
+    # Check main item image
+    img = data.get("img", "")
+    if img:
+        # Invalid patterns that don't exist
+        invalid_patterns = [
+            "systems/draw-steel/assets/icons/treasures/",
+            "systems/draw-steel/assets/icons/svg/",
+        ]
+        for pattern in invalid_patterns:
+            if pattern in img:
+                result.add_error(
+                    f"Reward '{reward_name}' has invalid image path '{img}'. "
+                    f"Path '{pattern}' does not exist. "
+                    f"Use Foundry core icons: 'icons/equipment/...', 'icons/magic/...', etc."
+                )
+                return
+
+    # Check effect images
+    effects = data.get("effects", [])
+    for effect in effects:
+        effect_img = effect.get("img", "")
+        if effect_img:
+            for pattern in invalid_patterns:
+                if pattern in effect_img:
+                    result.add_warning(
+                        f"Effect image path '{effect_img}' may not exist. "
+                        f"Use Foundry core icons: 'icons/...'"
+                    )
+
+
 def validate_json_file(filepath: str) -> ValidationResult:
     """
     Validate a single JSON file and return a ValidationResult.
@@ -907,6 +946,7 @@ def validate_json_file(filepath: str) -> ValidationResult:
     validate_treasure_category(data, result)
     validate_treasure_kind(data, result)
     validate_invalid_fields(data, result)
+    validate_image_path(data, result)
     validate_echelon(data, result)
     validate_keywords_lowercase(data, result)
     validate_creation_keywords(data, result)
