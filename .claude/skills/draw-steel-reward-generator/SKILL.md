@@ -1403,6 +1403,66 @@ Benefits (choose one):
 - If I Wanted You Dead, You'd Be Dead: Whenever you reduce a creature to 0 Stamina without killing them, you can use a free action to shift 3 squares and make another attack.
 ```
 
+## Foundry VTT Treasure Item Structure (CRITICAL)
+
+### Required Fields
+
+Every treasure item MUST have these fields:
+
+| Field | Type | Valid Values |
+|-------|------|--------------|
+| `type` | string | `"treasure"` (NOT "equipment"!) |
+| `system.kind` | string | `"other"`, `"armor"`, `"implement"`, `"weapon"` or `""` |
+| `system.category` | string | `"consumable"`, `"trinket"`, `"leveled"`, `"artifact"` |
+| `system.echelon` | integer | `1`, `2`, `3`, `4` |
+| `system.keywords` | array | Must include `"magic"` or `"psionic"` |
+| `system.quantity` | integer | Default `1` |
+| `system.project` | object | See Project Structure below |
+
+### Common Errors (NEVER USE)
+
+```json
+// ❌ WRONG - These will cause import errors:
+{
+  "type": "equipment",           // WRONG! Must be "treasure"
+  "system": {
+    "type": {"value": "implement"},  // WRONG! Use "kind": "implement"
+    "equipmentSlot": {"value": "..."}, // WRONG! Not a valid field
+    "damage": {"tier1": {...}},      // WRONG! Not a valid field
+    "benefits": {...},               // WRONG! Not a valid field
+    "level": {"value": 1}            // WRONG! Use "echelon": 1
+  }
+}
+
+// ✓ CORRECT:
+{
+  "type": "treasure",
+  "system": {
+    "kind": "implement",
+    "category": "leveled",
+    "echelon": 1,
+    "keywords": ["magic", "implement"],
+    "quantity": 1,
+    "project": {...}
+  }
+}
+```
+
+### Project Structure
+
+```json
+"project": {
+  "prerequisites": "String describing materials needed",
+  "source": "Region name (lowercase): caelian, anjali, khemharic, etc.",
+  "rollCharacteristic": ["reason", "intuition"],
+  "yield": {
+    "amount": "1d3",
+    "display": ""
+  },
+  "goal": 450
+}
+```
+
 ## Foundry JSON Schema Examples
 
 ### Example 1: Consumable (Black Ash Dart)

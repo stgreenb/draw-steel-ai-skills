@@ -14,6 +14,9 @@ from pathlib import Path
 # Valid treasure categories
 VALID_TREASURE_CATEGORIES = {"consumable", "trinket", "leveled", "artifact"}
 
+# Valid treasure kinds (for leveled treasures and artifacts)
+VALID_TREASURE_KINDS = {"", "other", "armor", "implement", "weapon"}
+
 # Valid treasure creation keywords (every treasure must have one or both)
 VALID_CREATION_KEYWORDS = {"magic", "psionic"}
 
@@ -149,6 +152,51 @@ def validate_treasure_category(data: dict, result: ValidationResult) -> None:
         result.add_error(
             f"Invalid treasure category '{category}'. "
             f"Must be one of: {', '.join(sorted(VALID_TREASURE_CATEGORIES))}"
+        )
+
+
+def validate_treasure_kind(data: dict, result: ValidationResult) -> None:
+    """Validate treasure kind field."""
+    if data.get("type") != "treasure":
+        return
+
+    system = data.get("system", {})
+    kind = system.get("kind")
+
+    if kind is not None and kind not in VALID_TREASURE_KINDS:
+        result.add_error(
+            f"Invalid treasure kind '{kind}'. "
+            f"Must be one of: {', '.join(sorted(VALID_TREASURE_KINDS))}"
+        )
+
+
+def validate_invalid_fields(data: dict, result: ValidationResult) -> None:
+    """
+    Check for invalid fields that indicate wrong JSON structure.
+
+    These fields are NOT valid for treasure items and indicate
+    the generator used wrong structure.
+    """
+    if data.get("type") != "treasure":
+        return
+
+    system = data.get("system", {})
+
+    # Check for invalid fields
+    invalid_fields = ["equipmentSlot", "benefits", "damage", "level", "type"]
+    invalid_system_fields = {f: system.get(f) for f in invalid_fields if f in system}
+
+    for field in invalid_system_fields:
+        result.add_error(
+            f"Invalid field 'system.{field}' found. This field does not exist in treasure items. "
+            f"Use correct structure: kind, category, echelon, keywords, quantity, project."
+        )
+
+    # Check if system.type exists (should be system.kind)
+    if "type" in system:
+        result.add_error(
+            f"Found 'system.type' field. Treasures use 'system.kind' not 'system.type'. "
+            f'Use "kind": "implement" instead of "type": {{"value": "implement"}}.'
         )
 
 
@@ -826,6 +874,8 @@ def validate_json_file(filepath: str) -> ValidationResult:
     # Run all validations
     validate_item_type(data, result)
     validate_treasure_category(data, result)
+    validate_treasure_kind(data, result)
+    validate_invalid_fields(data, result)
     validate_echelon(data, result)
     validate_keywords_lowercase(data, result)
     validate_creation_keywords(data, result)
