@@ -913,15 +913,53 @@ This is MANDATORY when generating DTOs - never skip validation.
 
 When converting traps/hazards from other systems:
 
+**Extract from source (for inspiration ONLY):**
+- Theme & concept (fire trap → fire damage type)
+- DTO category (trap, hazard, mechanism, etc.)
+- Effect concepts (area damage, conditions, triggers)
+- Level/CR as starting point for DTO level
+
+**Calculate using Draw Steel formulas:**
+- Stamina from Draw Steel patterns (NOT source HP)
+- Damage from Draw Steel formulas (NOT source dice)
+- DC → potency notation (NOT "DC X save")
+
+**Never copy:**
+- HP → Use Draw Steel stamina formulas instead
+- Damage dice (2d6, etc.) → Use fixed Draw Steel damage values
+- DC values → Use potency (M < 2, A < 1, etc.)
+- Saving throws → Use power rolls with potency
+- Source system terminology or mechanics
+
+**❌ WRONG - Direct conversion:**
+```
+PF2e Hazard: "HP 60, Disable DC 22, 2d6 fire + 2d6 mental damage"
+DTO: Stamina 60, Deactivate DC 22, 7 fire + 7 psychic damage  ❌
+```
+
+**✓ CORRECT - Use Draw Steel formulas:**
+```
+PF2e Level 4 Hazard → Level 4 Supernatural Object
+Stamina: Use DTO stamina pattern for L4 (NOT source HP 60)
+- L4 Supernatural Object: 100-140 stamina (see Published Examples)
+- L4 Siege Engine: 60 stamina
+Damage: Use Draw Steel damage formula for L4
+- L4 damage: 7/12/16 or 8/13/17 (NOT source dice 2d6+2d6)
+Deactivate: Presence test with tiered outcomes (NOT "DC 22")
+```
+
 **✅ DO:**
 - Extract THEME and CONCEPT
 - Take ability CONCEPTS and reimagine with Draw Steel mechanics
 - Use appropriate damage type for theme
+- Use Draw Steel stamina patterns by level and category
 
 **❌ DO NOT:**
-- Copy D&D mechanics (DC, saving throws, dice notation)
-- Use D&D terminology
-- Try to recreate exact D&D effects
+- Copy HP values directly → Use Draw Steel stamina formulas
+- Copy damage dice → Use Draw Steel fixed damage values
+- Copy DC values → Use potency or power rolls
+- Use D&D/PF2e terminology
+- Try to recreate exact effects from source
 
 **Example Conversion:**
 
@@ -1409,3 +1447,53 @@ This is MANDATORY - never skip validation.
 | Tree of Might | 5 | Power Fixture | Hexer | 14 | 60 |
 | Iron Dragon | 4 | Siege Engine | Artillery | 12 | 60 |
 | Throne of A'An | 4 | Supernatural | Controller | 24 | 140 |
+
+## Stamina by Category and Level
+
+**CRITICAL:** Never copy HP from source systems. Use these Draw Steel patterns:
+
+| Category | Stamina Pattern | Notes |
+|----------|-----------------|-------|
+| **Hazard** | 3-12 per square | Area-based, squareStamina: true |
+| **Fieldwork** | 3-6 | Low stamina, defensive structures |
+| **Mechanism** | 3-5 | Low stamina, can be disabled |
+| **Siege Engine** | 30-60 by level | High stamina, L2=30-40, L3=50, L4=60 |
+| **Supernatural Object** | 100-140 by level | Very high stamina, L3=100, L4=140 |
+| **Power Fixture** | 35-60 by level | Medium-high stamina |
+| **Trigger** | - or 0 | Usually indestructible |
+
+**Stamina by Level (approximate):**
+- **Level 1:** 3-6 (simple traps), 3/sq (hazards)
+- **Level 2:** 3-6 (traps), 30-40 (siege engines)
+- **Level 3:** 5-12 (traps/mechanisms), 50 (siege engines), 100 (supernatural)
+- **Level 4:** 60 (siege engines), 140 (supernatural)
+- **Level 5:** 35-60 (power fixtures)
+
+## Damage by Level
+
+**CRITICAL:** Never copy damage dice from source systems. Use Draw Steel formulas:
+
+```
+Damage = ceil((4 + Level + Role_Modifier) × Tier_Multiplier)
+```
+
+**Role Modifiers:**
+- Ambusher, Artillery, Brute: +1
+- Controller, Defender, Harrier, Hexer, Mount, Support: +0
+
+**Tier Multipliers:**
+- Tier 1 (≤11): ×0.5
+- Tier 2 (12-16): ×1.0
+- Tier 3 (17+): ×1.5
+
+**Quick Reference:**
+
+| Level | Tier 1 | Tier 2 | Tier 3 | (with +1 role) |
+|-------|--------|--------|--------|----------------|
+| 1 | 2 | 5 | 7 | 3/6/9 |
+| 2 | 3 | 6 | 9 | 4/7/11 |
+| 3 | 4 | 7 | 11 | 4/8/12 |
+| 4 | 4 | 8 | 12 | 5/9/14 |
+| 5 | 5 | 9 | 14 | 5/10/15 |
+
+**Example:** Level 4 Ambusher DTO → damage is 5/9/14
