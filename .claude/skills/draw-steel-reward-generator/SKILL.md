@@ -378,6 +378,14 @@ Wearable items with passive effects and optional triggered abilities. Include bo
 ### Leveled Treasures
 Equipment that scales with hero level (1st, 5th, 9th). Includes weapons, armor, shields, implements, rings, and other wearable items.
 
+**CRITICAL: Body Keywords for Leveled Treasures**
+All leveled treasures require a body keyword indicating where they're worn:
+- **Implements:** Always use `"hands"` keyword
+- **Weapons:** Use `"hands"` keyword (wielded in hands)
+- **Armor:** No body keyword needed (covers body)
+- **Shields:** Use `"hands"` keyword (worn on arm/hand)
+- **Rings:** Use `"ring"` keyword
+
 ### Titles
 Accomplishments heroes can earn. Each title has prerequisites and 3-4 benefit options (or single benefit for individual titles).
 
@@ -1943,8 +1951,10 @@ This is MANDATORY - never skip validation.
 - [ ] Echelon is 1-4
 - [ ] Project goal is 450
 - [ ] Equipment keyword present (weapon, armor categories, implement types)
+- [ ] **Implements must have "hands" body keyword**
 - [ ] Scaling follows published patterns (damage: +1/+2/+3, stamina: +6/+12/+21)
 - [ ] Effects array has separate effects for 1st, 5th, 9th level
+- [ ] Effect names use format: `[Name] (1st level)`, `[Name] (5th level)`, `[Name] (9th level)`
 
 ### Titles
 - [ ] Item type is "title"
@@ -1956,11 +1966,26 @@ This is MANDATORY - never skip validation.
 
 ### Foundry JSON
 - [ ] `_stats.systemId` is "draw-steel"
-- [ ] `_dsid` is kebab-case
+- [ ] `system._dsid` is kebab-case (inside system object, NOT at root level)
 - [ ] Project source is valid region
 - [ ] Yield structure is correct (amount string, display empty)
 - [ ] Effects use valid types (abilityModifier, base)
 - [ ] Duration fields are properly structured
+- [ ] **All `_id` fields are exactly 16 alphanumeric characters** (`^[a-zA-Z0-9]{16}$`)
+- [ ] Effect `_id` fields follow same 16-char format
+- [ ] No duplicate `_id` values within the same reward
+
+### ID Generation
+
+Generate valid 16-character IDs using:
+```bash
+python .claude/skills/draw-steel-reward-generator/scripts/generate_foundry_ids.py --count 5
+```
+
+All `_id` fields must match pattern `^[a-zA-Z0-9]{16}$`:
+- Item `_id`: `"URT9F9h3X4fUTnbw"`
+- Effect `_id`: `"gfVgPV1HVUECIQ90"`
+- Never use UUIDs with dashes or descriptive names
 
 ## Using Examples as Inspiration
 
