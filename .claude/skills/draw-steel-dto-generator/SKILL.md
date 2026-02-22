@@ -1162,14 +1162,23 @@ The Draw Steel system does NOT have category-specific icons (no `trap.svg`, `haz
 **damageDisplay** (Required):
 ```json
 // CORRECT - Only valid values:
-"damageDisplay": "melee"   // For melee attacks
-"damageDisplay": "ranged"  // For ranged attacks
+"damageDisplay": "melee"   // For melee attacks (distance.type: "melee")
+"damageDisplay": "ranged"  // For ranged attacks, area attacks, bursts, cubes, etc.
 
 // WRONG - These cause validation errors:
 "damageDisplay": "none"    // ❌ NOT VALID
 "damageDisplay": "other"   // ❌ NOT VALID
 "damageDisplay": ""        // ❌ NOT VALID
 ```
+
+**When to use "ranged":**
+- Distance type is `ranged`, `burst`, `cube`, `line`, `wall`, or `aura`
+- Area effects (10 burst, 5 cube, etc.)
+- Any non-melee attack
+
+**Deactivate/Activate features** (no attack roll):
+- Use `"damageDisplay": "melee"` as default
+- These features typically don't have power rolls with damage
 
 **target.value** (Required integer):
 ```json
@@ -1294,6 +1303,38 @@ The Draw Steel system does NOT have category-specific icons (no `trap.svg`, `haz
   "poison": 1000,
   "psychic": 1000,
   "corruption": 1000
+}
+```
+
+### Damage Type Conversions
+
+When converting from other systems, use these Draw Steel damage types:
+
+| Other System | Draw Steel |
+|--------------|------------|
+| mental | **psychic** |
+| necrotic | **corruption** |
+| radiant | **holy** |
+| thunder | **sonic** |
+
+**Valid Draw Steel damage types:** acid, cold, corruption, fire, holy, lightning, poison, psychic, sonic
+
+### Condition Immunities
+
+DTOs can be immune to conditions via `system.statuses.immunities`:
+
+```json
+"statuses": {
+  "immunities": ["dazed", "frightened", "grabbed", "panicked", "prone", "restrained", "slowed", "weakened"]
+}
+```
+
+**Valid conditions:** bleeding, dazed, frightened, grabbed, panicked, prone, restrained, slowed, weakened
+
+**All Conditions Immunity:**
+```json
+"statuses": {
+  "immunities": ["bleeding", "dazed", "frightened", "grabbed", "panicked", "prone", "restrained", "slowed", "weakened"]
 }
 ```
 

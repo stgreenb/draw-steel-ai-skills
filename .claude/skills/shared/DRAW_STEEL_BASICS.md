@@ -12,10 +12,39 @@ Common rules and terminology for all Draw Steel content generation.
 
 **For untyped damage:** Use empty array `"types": []` or describe in effect text
 
+### Damage Type Conversions
+
+| Other System | Draw Steel |
+|--------------|------------|
+| mental | **psychic** |
+| necrotic | **corruption** |
+| radiant | **holy** |
+| thunder | **sonic** |
+| force | untyped (`"types": []`) |
+| physical (slashing/bludgeoning/piercing) | untyped (`"types": []`) |
+
 ## Valid Conditions (Draw Steel Only)
 
 **ONLY these conditions are valid in Draw Steel:**
 - `bleeding`, `dazed`, `frightened`, `grabbed`, `prone`, `restrained`, `slowed`, `taunted`, `weakened`
+
+**Additional conditions found in Draw Steel source:**
+- `panicked` - Similar to frightened but stronger
+
+### Condition Immunities (Foundry JSON)
+
+```json
+"statuses": {
+  "immunities": ["dazed", "frightened", "grabbed", "panicked", "prone", "restrained", "slowed", "weakened"]
+}
+```
+
+**All Conditions Immunity** - List all conditions in the array:
+```json
+"statuses": {
+  "immunities": ["bleeding", "dazed", "frightened", "grabbed", "panicked", "prone", "restrained", "slowed", "weakened"]
+}
+```
 
 **Condition Duration Rules:**
 
@@ -66,6 +95,59 @@ Common rules and terminology for all Draw Steel content generation.
 - **Strong:** Characteristic (Leader/Solo +1)
 
 **Markdown notation:** `M < 2` means "if target's Might is less than 2"
+
+### Foundry JSON Potency Structure
+
+**Applied effects use potency in the `applied` object:**
+
+```json
+"applied": {
+  "tier1": {
+    "display": "{{potency}} slowed (save ends)",
+    "potency": { "value": "@potency.weak", "characteristic": "agility" }
+  },
+  "tier2": {
+    "display": "{{potency}} slowed (save ends)",
+    "potency": { "value": "@potency.average", "characteristic": "agility" }
+  },
+  "tier3": {
+    "display": "{{potency}} frightened (save ends)",
+    "potency": { "value": "@potency.strong", "characteristic": "presence" }
+  }
+}
+```
+
+**Potency value formats:**
+
+| Format | When to Use |
+|--------|-------------|
+| `@potency.weak` | Tier 1 effects (characteristic - 2) |
+| `@potency.average` | Tier 2 effects (characteristic - 1) |
+| `@potency.strong` | Tier 3 effects (characteristic) |
+| `-1`, `-2`, `-3` | Numeric offsets from characteristic |
+| `0`, `1`, `2`, `3` | Direct potency values |
+
+**Characteristic values:** `might`, `agility`, `reason`, `intuition`, `presence`, or `""` for no characteristic
+
+**Potency condition values:** `always`, `failure`, `success`
+
+**Example - Applied condition with potency:**
+```json
+"applied": {
+  "tier1": {
+    "display": "",
+    "potency": { "value": "@potency.weak", "characteristic": "might" }
+  },
+  "tier2": {
+    "display": "{{potency}} dazed (save ends)",
+    "potency": { "value": "-1", "characteristic": "might" }
+  },
+  "tier3": {
+    "display": "{{potency}} dazed and slowed (save ends)",
+    "potency": { "value": "-2", "characteristic": "might" }
+  }
+}
+```
 
 ## Power Roll Format
 
