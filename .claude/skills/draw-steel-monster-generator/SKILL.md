@@ -270,7 +270,7 @@ The monster stat block is provided below. For detailed error information includi
       "ownership": { "default": 0 }
     }
   ],
-  "_stats": { "systemId": "draw-steel", "systemVersion": "0.10.0" },
+  "_stats": { "systemId": "draw-steel", "systemVersion": "0.11.0" },
   "_id": "sJhjuVdliz3ThjEa"
 }
 ```

@@ -2,10 +2,10 @@
 name: draw-steel-retainer-generator
 description: Generates Draw Steel TTRPG retainers (NPC followers) with formula-compliant stat blocks. Use when creating retainers, converting monsters to retainers, or designing NPC followers for the Draw Steel tabletop roleplaying game.
 license: MIT
-compatibility: Designed for Claude Code, Cursor, Gemini CLI, and Antigravity Google following the Agent Skills specification.
+compatibility: Designed for Foundry VTT v0.11.0+, Claude Code, Cursor, Gemini CLI, and Antigravity Google following the Agent Skills specification.
 metadata:
   author: stgreenb
-  version: "1.0"
+  version: "1.1"
 ---
 
 # Draw Steel Retainer Generator
@@ -21,7 +21,22 @@ Generate Draw Steel TTRPG retainers that strictly conform to official MCDM stat 
 - `"Create a Level 5 Goblin Guide, Harrier"`
 - `"Create a Level 3 Angulotl Hopper, Ambusher"`
 
-**Output Formats:** `--format markdown` (default - Foundry VTT does not yet support retainers)
+**Output Formats:** `--format markdown` (default) or `--format foundry` (for Foundry VTT v0.11.0 JSON)
+
+## Foundry VTT Export
+
+Retainers can be exported to Foundry VTT JSON format using `--format foundry`. The generated JSON conforms to the Draw Steel v0.11.0 retainer actor type.
+
+**Reference:** See `references/foundry-export.md` for complete JSON structure.
+
+### Key Export Differences from Monsters
+
+| Aspect | Markdown | Foundry JSON |
+|--------|----------|--------------|
+| Actor Type | N/A | `"retainer"` |
+| System Object | N/A | `system.retainer` |
+| Recoveries | Not applicable | `system.recoveries` (6 max) |
+| Token Disposition | N/A | `1` (friendly) |
 
 ## Retainer Core Mechanics
 

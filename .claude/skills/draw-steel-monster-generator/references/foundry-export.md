@@ -80,7 +80,7 @@ This document provides the exact JSON structure required when generating Foundry
   "items": [],
   "_stats": {
     "systemId": "draw-steel",
-    "systemVersion": "0.10.0"
+    "systemVersion": "0.11.0"
   },
   "_id": "uuid-here"
 }
@@ -667,7 +667,7 @@ Villain actions use `type: "ability"` with `system.type: "villain"` and `system.
   ],
   "_stats": {
     "systemId": "draw-steel",
-    "systemVersion": "0.10.0"
+    "systemVersion": "0.11.0"
   },
   "_id": "AncientBlackDragon001"
 }
@@ -940,7 +940,7 @@ Villain actions use `type: "ability"` with `system.type: "villain"` and `system.
   ],
   "_stats": {
     "systemId": "draw-steel",
-    "systemVersion": "0.10.0"
+    "systemVersion": "0.11.0"
   },
   "_id": "OrcWarChief001"
 }
