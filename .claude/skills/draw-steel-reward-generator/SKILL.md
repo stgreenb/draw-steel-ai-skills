@@ -1242,6 +1242,7 @@ Some treasures have enhanced yield for specific ancestries/backgrounds:
 - `filters.keywords` allows targeting specific ability types (weapon, ranged, magic, etc.)
 - `mode: 2` = additive, `mode: 4` = override/set value
 - `disabled: true` by default (activated when worn/equipped)
+- **`transfer: true` is REQUIRED on all `abilityModifier` effects** — without it, the effect stays on the item and never applies to the actor. This is the single most common mistake when generating leveled treasures.
 
 **Damage Bonus Changes:**
 - Keys: `damage.tier1.value`, `damage.tier2.value`, `damage.tier3.value`
@@ -2005,6 +2006,14 @@ This is MANDATORY - never skip validation.
 - [ ] **All `_id` fields are exactly 16 alphanumeric characters** (`^[a-zA-Z0-9]{16}$`)
 - [ ] Effect `_id` fields follow same 16-char format
 - [ ] No duplicate `_id` values within the same reward
+
+### Foundry JSON Checklist (CRITICAL - Verify Before Delivery)
+
+Before delivering a Foundry JSON, verify:
+- [ ] Every `abilityModifier` effect has `"transfer": true`
+- [ ] Every `abilityModifier` effect has `"disabled": true` (player enables the correct echelon tier)
+- [ ] `changes[].key` uses `"damage.tier1.value"`, `"damage.tier2.value"`, `"damage.tier3.value"` (NOT `"damage.bonuses.value"` for weapon/implement damage bonuses)
+- [ ] `system.filters.keywords` matches the treasure's kind (e.g., `["magic"]`, `["weapon"]`, `["implement"]`, `["magic", "neck"]`)
 
 ### ID Generation
 
