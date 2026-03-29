@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.1] - 2026-03-29
+
+### Added
+- **Reward Generator transfer:true Guidance:** Added explicit documentation that `transfer: true` is required on all `abilityModifier` effects in Foundry JSON — without it, effects stay on the item and never apply to the actor
+- **Foundry JSON Checklist:** Added pre-delivery checklist for verifying `transfer`, `disabled`, damage key paths, and keyword filters in Foundry JSON output
+
+### Fixed
+- **Missing transfer:true:** Reward generator skill now documents the critical `transfer: true` requirement for leveled treasure effects, preventing the most common Foundry export mistake
+
 ## [1.7.0] - 2026-02-21
 
 ### Added
